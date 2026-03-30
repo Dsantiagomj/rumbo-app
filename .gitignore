@@ -1,0 +1,36 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build outputs
+dist/
+.output/
+.vercel/
+.next/
+
+# environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# turbo
+.turbo/
+
+# testing
+coverage/
+
+# misc
+*.log
+npm-debug.log*
+pnpm-debug.log*
