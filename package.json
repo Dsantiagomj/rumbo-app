@@ -15,10 +15,16 @@
     "test": "turbo test",
     "db:generate": "turbo db:generate --filter=@rumbo/db",
     "db:migrate": "turbo db:migrate --filter=@rumbo/db",
-    "db:studio": "turbo db:studio --filter=@rumbo/db"
+    "db:studio": "turbo db:studio --filter=@rumbo/db",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,json,css}": "biome check --write --no-errors-on-unmatched"
   },
   "devDependencies": {
     "@biomejs/biome": "latest",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
     "turbo": "latest",
     "typescript": "latest"
   }
