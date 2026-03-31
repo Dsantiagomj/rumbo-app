@@ -52,11 +52,11 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
     <form onSubmit={handleSubmit(onSubmit)}>
       <FieldGroup>
         <Field data-invalid={errors.name ? true : undefined}>
-          <FieldLabel htmlFor="signup-name">Nombre</FieldLabel>
+          <FieldLabel htmlFor="signup-name">Como quieres que te llame Rumbo?</FieldLabel>
           <Input
             id="signup-name"
             type="text"
-            placeholder="Tu nombre"
+            placeholder="Tu nombre o apodo"
             autoComplete="name"
             aria-invalid={!!errors.name}
             {...register('name')}
