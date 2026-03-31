@@ -56,7 +56,7 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
           <Input
             id="signup-name"
             type="text"
-            placeholder="Tu nombre o como prefieras"
+            placeholder="Tu nombre o como prefieres ser llamado"
             autoComplete="name"
             aria-invalid={!!errors.name}
             {...register('name')}
