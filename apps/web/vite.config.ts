@@ -17,13 +17,13 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'prompt',
-      includeAssets: ['favicon.svg'],
+      includeAssets: ['favicon.svg', 'favicon.ico', 'apple-touch-icon.png'],
       manifest: {
         name: 'RumboApp',
         short_name: 'Rumbo',
-        description: 'Personal Finance PWA',
-        theme_color: '#0f172a',
-        background_color: '#ffffff',
+        description: 'Personal Finance PWA — Track expenses, forecast cash flow, plan debt payoff',
+        theme_color: '#111111',
+        background_color: '#111111',
         display: 'standalone',
         start_url: '/',
         icons: [
@@ -33,9 +33,20 @@ export default defineConfig({
             type: 'image/png',
           },
           {
-            src: '/pwa-512x512.png',
+            src: '/pwa-256x256.png',
+            sizes: '256x256',
+            type: 'image/png',
+          },
+          {
+            src: '/icon-512x512.png',
             sizes: '512x512',
             type: 'image/png',
+          },
+          {
+            src: '/icon-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any maskable',
           },
         ],
       },
