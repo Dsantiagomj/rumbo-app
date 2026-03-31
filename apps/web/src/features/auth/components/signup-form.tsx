@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { type SignupInput, signupSchema } from '@rumbo/shared';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { translateAuthError } from '@/features/auth/utils/translate-error';
 import { Button } from '@/shared/components/ui/button';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/components/ui/field';
 import { Input } from '@/shared/components/ui/input';
@@ -35,7 +36,7 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
       });
 
       if (result.error) {
-        setError(result.error.message ?? 'Error al crear la cuenta');
+        setError(translateAuthError(result.error.message ?? 'Error al crear la cuenta'));
         return;
       }
 
