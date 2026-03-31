@@ -1,0 +1,39 @@
+{
+  "name": "@rumbo/web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "latest",
+    "@rumbo/shared": "workspace:*",
+    "@tanstack/react-query": "latest",
+    "@tanstack/react-router": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-hook-form": "latest",
+    "zustand": "latest",
+    "zod": "latest"
+  },
+  "devDependencies": {
+    "@rumbo/typescript-config": "workspace:*",
+    "@tailwindcss/vite": "latest",
+    "@tanstack/react-query-devtools": "latest",
+    "@tanstack/react-router-devtools": "latest",
+    "@tanstack/router-plugin": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "@vite-pwa/assets-generator": "latest",
+    "@vitejs/plugin-react": "latest",
+    "tailwindcss": "latest",
+    "tw-animate-css": "latest",
+    "typescript": "latest",
+    "vite": "latest",
+    "vite-plugin-pwa": "latest"
+  }
+}

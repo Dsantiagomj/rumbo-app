@@ -1,0 +1,25 @@
+{
+  "name": "rumboapp",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.6.2",
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "dev": "turbo dev",
+    "dev:web": "turbo dev --filter=@rumbo/api --filter=@rumbo/web",
+    "dev:api": "turbo dev --filter=@rumbo/api",
+    "build": "turbo build",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "typecheck": "turbo typecheck",
+    "test": "turbo test",
+    "db:generate": "turbo db:generate --filter=@rumbo/db",
+    "db:migrate": "turbo db:migrate --filter=@rumbo/db",
+    "db:studio": "turbo db:studio --filter=@rumbo/db"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "latest",
+    "turbo": "latest",
+    "typescript": "latest"
+  }
+}
