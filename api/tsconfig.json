@@ -1,9 +1,0 @@
-{
-  "extends": "../tooling/typescript/base.json",
-  "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": ".."
-  },
-  "include": ["./**/*.ts", "../apps/api/src/**/*.ts"],
-  "exclude": ["node_modules", "dist"]
-}

@@ -6,8 +6,8 @@
   "outputDirectory": "apps/web/dist",
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "/api/:path*"
+      "source": "/api/(.*)",
+      "destination": "/api"
     }
   ]
 }
