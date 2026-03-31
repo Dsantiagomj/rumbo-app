@@ -51,7 +51,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
     <form onSubmit={handleSubmit(onSubmit)}>
       <FieldGroup>
         <Field data-invalid={errors.email ? true : undefined}>
-          <FieldLabel htmlFor="login-email">Email</FieldLabel>
+          <FieldLabel htmlFor="login-email">Tu email</FieldLabel>
           <Input
             id="login-email"
             type="email"
@@ -64,7 +64,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         </Field>
 
         <Field data-invalid={errors.password ? true : undefined}>
-          <FieldLabel htmlFor="login-password">Contrasena</FieldLabel>
+          <FieldLabel htmlFor="login-password">Tu contrasena</FieldLabel>
           <Input
             id="login-password"
             type="password"
@@ -81,7 +81,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         )}
 
         <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? 'Iniciando sesion...' : 'Iniciar sesion'}
+          {loading ? 'Entrando...' : 'Entrar'}
         </Button>
       </FieldGroup>
     </form>

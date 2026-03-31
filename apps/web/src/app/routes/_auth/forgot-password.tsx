@@ -9,11 +9,11 @@ export const Route = createFileRoute('/_auth/forgot-password')({
 function ForgotPasswordPage() {
   return (
     <AuthLayout
-      title="Recuperar contrasena"
-      description="Te enviaremos un enlace para restablecer tu contrasena"
+      title="No te preocupes"
+      description="Te enviamos un enlace para que crees una nueva contrasena"
       footer={
         <Link to="/login" className="text-primary hover:underline">
-          Volver a iniciar sesion
+          Volver a entrar
         </Link>
       }
     >

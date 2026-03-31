@@ -27,16 +27,16 @@ function ResetPasswordPage() {
   if (tokenError === 'INVALID_TOKEN' || !token) {
     return (
       <AuthLayout
-        title="Enlace invalido"
-        description="El enlace de recuperacion ha expirado o no es valido"
+        title="Este enlace ya no funciona"
+        description="Puede que haya expirado o ya lo hayas usado"
         footer={
           <Link to="/forgot-password" className="text-primary hover:underline">
-            Solicitar nuevo enlace
+            Pedir otro enlace
           </Link>
         }
       >
         <div className="text-center text-sm text-muted-foreground">
-          <p>Solicita un nuevo enlace de recuperacion para restablecer tu contrasena.</p>
+          <p>Pide un nuevo enlace y te lo enviamos al correo.</p>
         </div>
       </AuthLayout>
     );
@@ -44,16 +44,14 @@ function ResetPasswordPage() {
 
   if (success) {
     return (
-      <AuthLayout title="Contrasena restablecida">
+      <AuthLayout title="Listo, contrasena actualizada">
         <div className="flex flex-col items-center gap-4 text-center">
           <div className="flex size-12 items-center justify-center rounded-full bg-primary/10">
             <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-6 text-primary" />
           </div>
-          <p className="text-sm text-muted-foreground">
-            Tu contrasena ha sido restablecida exitosamente.
-          </p>
+          <p className="text-sm text-muted-foreground">Ya puedes entrar con tu nueva contrasena.</p>
           <Button className="w-full" onClick={() => navigate({ to: '/login' })}>
-            Ir a iniciar sesion
+            Entrar
           </Button>
         </div>
       </AuthLayout>
@@ -62,11 +60,10 @@ function ResetPasswordPage() {
 
   return (
     <AuthLayout
-      title="Nueva contrasena"
-      description="Ingresa tu nueva contrasena"
+      title="Elige tu nueva contrasena"
       footer={
         <Link to="/login" className="text-primary hover:underline">
-          Volver a iniciar sesion
+          Volver a entrar
         </Link>
       }
     >

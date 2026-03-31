@@ -12,7 +12,7 @@ export function AuthLayout({ children, title, description, footer }: AuthLayoutP
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="flex w-full max-w-sm flex-col gap-8">
         <div className="flex flex-col items-center gap-2">
-          <img src="/favicon.svg" alt="Rumbo" className="size-12" />
+          <img src="/favicon.svg" alt="Rumbo" className="size-12 dark:invert" />
           <h1 className="font-heading text-2xl font-bold tracking-tight">Rumbo</h1>
         </div>
 

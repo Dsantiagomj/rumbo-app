@@ -11,13 +11,12 @@ function SignupPage() {
 
   return (
     <AuthLayout
-      title="Crear cuenta"
-      description="Completa tus datos para empezar a usar RumboApp"
+      title="Vamos a conocernos"
       footer={
         <p>
           Ya tienes cuenta?{' '}
           <Link to="/login" className="text-primary hover:underline">
-            Iniciar sesion
+            Entra aqui
           </Link>
         </p>
       }

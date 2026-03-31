@@ -46,9 +46,9 @@ export function ForgotPasswordForm() {
         <div className="flex size-12 items-center justify-center rounded-full bg-primary/10">
           <HugeiconsIcon icon={Mail01Icon} className="size-6 text-primary" />
         </div>
-        <h3 className="font-heading text-lg font-semibold">Revisa tu correo</h3>
+        <h3 className="font-heading text-lg font-semibold">Listo, revisa tu correo</h3>
         <p className="text-sm text-muted-foreground">
-          Si existe una cuenta con ese email, te enviamos un enlace para restablecer tu contrasena.
+          Si hay una cuenta con ese email, te enviamos un enlace para crear una nueva contrasena.
         </p>
       </div>
     );
@@ -58,7 +58,7 @@ export function ForgotPasswordForm() {
     <form onSubmit={handleSubmit(onSubmit)}>
       <FieldGroup>
         <Field data-invalid={errors.email ? true : undefined}>
-          <FieldLabel htmlFor="forgot-email">Email</FieldLabel>
+          <FieldLabel htmlFor="forgot-email">Tu email</FieldLabel>
           <Input
             id="forgot-email"
             type="email"
@@ -75,7 +75,7 @@ export function ForgotPasswordForm() {
         )}
 
         <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? 'Enviando...' : 'Enviar enlace de recuperacion'}
+          {loading ? 'Enviando...' : 'Enviarme el enlace'}
         </Button>
       </FieldGroup>
     </form>

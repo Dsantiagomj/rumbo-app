@@ -52,11 +52,11 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
     <form onSubmit={handleSubmit(onSubmit)}>
       <FieldGroup>
         <Field data-invalid={errors.name ? true : undefined}>
-          <FieldLabel htmlFor="signup-name">Como quieres que te llame Rumbo?</FieldLabel>
+          <FieldLabel htmlFor="signup-name">Como te llamas?</FieldLabel>
           <Input
             id="signup-name"
             type="text"
-            placeholder="Tu nombre o apodo"
+            placeholder="Tu nombre o como prefieras"
             autoComplete="name"
             aria-invalid={!!errors.name}
             {...register('name')}
@@ -65,7 +65,7 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
         </Field>
 
         <Field data-invalid={errors.email ? true : undefined}>
-          <FieldLabel htmlFor="signup-email">Email</FieldLabel>
+          <FieldLabel htmlFor="signup-email">Tu email</FieldLabel>
           <Input
             id="signup-email"
             type="email"
@@ -78,11 +78,11 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
         </Field>
 
         <Field data-invalid={errors.password ? true : undefined}>
-          <FieldLabel htmlFor="signup-password">Contrasena</FieldLabel>
+          <FieldLabel htmlFor="signup-password">Elige una contrasena</FieldLabel>
           <Input
             id="signup-password"
             type="password"
-            placeholder="********"
+            placeholder="Minimo 8 caracteres"
             autoComplete="new-password"
             aria-invalid={!!errors.password}
             {...register('password')}
@@ -91,11 +91,11 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
         </Field>
 
         <Field data-invalid={errors.confirmPassword ? true : undefined}>
-          <FieldLabel htmlFor="signup-confirm-password">Confirmar contrasena</FieldLabel>
+          <FieldLabel htmlFor="signup-confirm-password">Repite la contrasena</FieldLabel>
           <Input
             id="signup-confirm-password"
             type="password"
-            placeholder="********"
+            placeholder="La misma de arriba"
             autoComplete="new-password"
             aria-invalid={!!errors.confirmPassword}
             {...register('confirmPassword')}
@@ -108,7 +108,7 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
         )}
 
         <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? 'Creando cuenta...' : 'Crear cuenta'}
+          {loading ? 'Creando tu cuenta...' : 'Empezar'}
         </Button>
       </FieldGroup>
     </form>

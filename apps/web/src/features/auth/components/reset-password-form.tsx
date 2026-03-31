@@ -52,11 +52,11 @@ export function ResetPasswordForm({ token, onSuccess }: ResetPasswordFormProps) 
     <form onSubmit={handleSubmit(onSubmit)}>
       <FieldGroup>
         <Field data-invalid={errors.password ? true : undefined}>
-          <FieldLabel htmlFor="reset-password">Nueva contrasena</FieldLabel>
+          <FieldLabel htmlFor="reset-password">Tu nueva contrasena</FieldLabel>
           <Input
             id="reset-password"
             type="password"
-            placeholder="********"
+            placeholder="Minimo 8 caracteres"
             autoComplete="new-password"
             aria-invalid={!!errors.password}
             {...register('password')}
@@ -65,11 +65,11 @@ export function ResetPasswordForm({ token, onSuccess }: ResetPasswordFormProps) 
         </Field>
 
         <Field data-invalid={errors.confirmPassword ? true : undefined}>
-          <FieldLabel htmlFor="reset-confirm-password">Confirmar contrasena</FieldLabel>
+          <FieldLabel htmlFor="reset-confirm-password">Repitela aqui</FieldLabel>
           <Input
             id="reset-confirm-password"
             type="password"
-            placeholder="********"
+            placeholder="La misma de arriba"
             autoComplete="new-password"
             aria-invalid={!!errors.confirmPassword}
             {...register('confirmPassword')}
@@ -82,7 +82,7 @@ export function ResetPasswordForm({ token, onSuccess }: ResetPasswordFormProps) 
         )}
 
         <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? 'Restableciendo...' : 'Restablecer contrasena'}
+          {loading ? 'Guardando...' : 'Guardar nueva contrasena'}
         </Button>
       </FieldGroup>
     </form>

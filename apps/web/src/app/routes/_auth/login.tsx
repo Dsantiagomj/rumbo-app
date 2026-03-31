@@ -11,17 +11,16 @@ function LoginPage() {
 
   return (
     <AuthLayout
-      title="Iniciar sesion"
-      description="Ingresa tus credenciales para acceder a tu cuenta"
+      title="Bienvenido de vuelta"
       footer={
         <div className="flex flex-col gap-2">
           <Link to="/forgot-password" className="text-primary hover:underline">
-            Olvidaste tu contrasena?
+            No recuerdo mi contrasena
           </Link>
           <p>
-            No tienes cuenta?{' '}
+            Aun no tienes cuenta?{' '}
             <Link to="/signup" className="text-primary hover:underline">
-              Crear cuenta
+              Crear una
             </Link>
           </p>
         </div>
