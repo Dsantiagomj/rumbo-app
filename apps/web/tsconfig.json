@@ -4,6 +4,8 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "jsx": "react-jsx",
     "outDir": "./dist",
+    "declaration": false,
+    "declarationMap": false,
     "types": ["vite/client"],
     "paths": {
       "@/*": ["./src/*"]

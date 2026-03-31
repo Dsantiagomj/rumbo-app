@@ -1,0 +1,5 @@
+{
+  "routesDirectory": "./src/app/routes",
+  "generatedRouteTree": "./src/app/route-tree.gen.ts",
+  "autoCodeSplitting": true
+}
