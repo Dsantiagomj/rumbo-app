@@ -1,0 +1,2 @@
+pnpm lint-staged
+command -v gga >/dev/null 2>&1 && { gga run || exit 1; }
