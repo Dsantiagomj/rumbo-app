@@ -7,7 +7,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://rumboapp-api.vercel.app/api/:path*"
+      "destination": "/api/:path*"
     }
   ]
 }
