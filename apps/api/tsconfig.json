@@ -2,6 +2,7 @@
   "extends": "../../tooling/typescript/base.json",
   "compilerOptions": {
     "outDir": "./dist",
+    "types": ["node"],
     "paths": {
       "@/*": ["./src/*"]
     }
