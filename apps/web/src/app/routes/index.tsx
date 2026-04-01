@@ -27,7 +27,7 @@ function HomePage() {
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="flex flex-col items-center gap-4 text-center">
-        <img src="/favicon.svg" alt="Rumbo" className="size-12 dark:invert" />
+        <img src="/favicon.svg" alt="Rumbo" className="size-12" />
         <h1 className="font-heading text-4xl font-bold">Rumbo</h1>
         <p className="text-muted-foreground">Hola, {session.user.name}</p>
         <Button variant="outline" onClick={handleSignOut}>
