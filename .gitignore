@@ -33,6 +33,7 @@ coverage/
 # AI tools
 .kiro/
 .claude/
+.agents/
 
 # misc
 *.log
