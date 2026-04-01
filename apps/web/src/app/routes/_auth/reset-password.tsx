@@ -1,6 +1,6 @@
 import { CheckmarkCircle02Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import { AuthLayout } from '@/features/auth/components/auth-layout';
 import { ResetPasswordForm } from '@/features/auth/components/reset-password-form';
@@ -27,7 +27,7 @@ function ResetPasswordPage() {
 
   if (tokenError === 'INVALID_TOKEN' || !token) {
     return (
-      <AuthLayout footer={<a href="/forgot-password">Pedir otro enlace</a>}>
+      <AuthLayout footer={<Link to="/forgot-password">Pedir otro enlace</Link>}>
         <FieldGroup>
           <div className="flex flex-col items-center gap-2 text-center">
             <img src="/favicon.svg" alt="Rumbo" className="size-8" />
@@ -64,7 +64,7 @@ function ResetPasswordPage() {
   }
 
   return (
-    <AuthLayout footer={<a href="/login">Volver a entrar</a>}>
+    <AuthLayout footer={<Link to="/login">Volver a entrar</Link>}>
       <ResetPasswordForm token={token} onSuccess={() => setSuccess(true)} />
     </AuthLayout>
   );

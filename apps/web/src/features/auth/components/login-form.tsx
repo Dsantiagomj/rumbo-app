@@ -79,7 +79,15 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         </Field>
 
         <Field data-invalid={errors.password ? true : undefined}>
-          <FieldLabel htmlFor="login-password">Tu contrasena</FieldLabel>
+          <div className="flex items-center justify-between">
+            <FieldLabel htmlFor="login-password">Tu contrasena</FieldLabel>
+            <Link
+              to="/forgot-password"
+              className="text-sm text-muted-foreground underline underline-offset-4 hover:text-primary"
+            >
+              La olvidaste?
+            </Link>
+          </div>
           <Input
             id="login-password"
             type="password"

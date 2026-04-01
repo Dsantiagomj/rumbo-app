@@ -10,7 +10,7 @@ function LoginPage() {
   const navigate = useNavigate();
 
   return (
-    <AuthLayout footer={<a href="/forgot-password">No recuerdo mi contrasena</a>}>
+    <AuthLayout>
       <LoginForm onSuccess={() => navigate({ to: '/' })} />
     </AuthLayout>
   );
