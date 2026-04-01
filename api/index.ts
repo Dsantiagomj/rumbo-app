@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { handle } from 'hono/vercel';
 import app from '../apps/api/src/index';
 
