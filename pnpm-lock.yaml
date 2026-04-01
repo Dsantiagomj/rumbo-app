@@ -8,9 +8,18 @@ importers:
 
   .:
     dependencies:
+      '@rumbo/db':
+        specifier: workspace:*
+        version: link:packages/db
+      better-auth:
+        specifier: latest
+        version: 1.5.6(@opentelemetry/api@1.9.0)(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@neondatabase/serverless@1.0.2)(@opentelemetry/api@1.9.0)(@types/pg@8.20.0)(kysely@0.28.14))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       hono:
         specifier: latest
         version: 4.12.9
+      resend:
+        specifier: latest
+        version: 6.10.0
     devDependencies:
       '@biomejs/biome':
         specifier: latest
