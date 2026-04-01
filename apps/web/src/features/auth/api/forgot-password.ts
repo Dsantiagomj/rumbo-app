@@ -1,4 +1,4 @@
-import { api } from '@/shared/lib/api-client';
+import { authClient } from '@/shared/lib/auth-client';
 
 interface RequestPasswordResetOptions {
   email: string;
@@ -6,5 +6,9 @@ interface RequestPasswordResetOptions {
 }
 
 export async function requestPasswordReset({ email, redirectTo }: RequestPasswordResetOptions) {
-  return api.post('/api/auth/forget-password', { email, redirectTo });
+  const { error } = await authClient.requestPasswordReset({ email, redirectTo });
+
+  if (error) {
+    throw new Error(error.message ?? 'Request failed');
+  }
 }
