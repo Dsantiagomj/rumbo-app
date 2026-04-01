@@ -35,5 +35,12 @@
     "lint-staged": "^16.4.0",
     "turbo": "latest",
     "typescript": "latest"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "sharp",
+      "unrs-resolver"
+    ]
   }
 }
