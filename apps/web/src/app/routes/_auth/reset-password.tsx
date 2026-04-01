@@ -1,10 +1,11 @@
 import { CheckmarkCircle02Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import { AuthLayout } from '@/features/auth/components/auth-layout';
 import { ResetPasswordForm } from '@/features/auth/components/reset-password-form';
 import { Button } from '@/shared/components/ui/button';
+import { FieldGroup } from '@/shared/components/ui/field';
 
 type ResetPasswordSearch = {
   token?: string;
@@ -26,47 +27,44 @@ function ResetPasswordPage() {
 
   if (tokenError === 'INVALID_TOKEN' || !token) {
     return (
-      <AuthLayout
-        title="Este enlace ya no funciona"
-        description="Puede que haya expirado o ya lo hayas usado"
-        footer={
-          <Link to="/forgot-password" className="text-primary hover:underline">
-            Pedir otro enlace
-          </Link>
-        }
-      >
-        <div className="text-center text-sm text-muted-foreground">
-          <p>Pide un nuevo enlace y te lo enviamos al correo.</p>
-        </div>
+      <AuthLayout footer={<a href="/forgot-password">Pedir otro enlace</a>}>
+        <FieldGroup>
+          <div className="flex flex-col items-center gap-2 text-center">
+            <img src="/favicon.svg" alt="Rumbo" className="size-8" />
+            <h1 className="text-xl font-bold">Este enlace ya no funciona</h1>
+            <p className="text-sm text-muted-foreground">
+              Puede que haya expirado o ya lo hayas usado. Pide un nuevo enlace y te lo enviamos al
+              correo.
+            </p>
+          </div>
+        </FieldGroup>
       </AuthLayout>
     );
   }
 
   if (success) {
     return (
-      <AuthLayout title="Listo, contrasena actualizada">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <div className="flex size-12 items-center justify-center rounded-full bg-primary/10">
-            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-6 text-primary" />
+      <AuthLayout>
+        <FieldGroup>
+          <div className="flex flex-col items-center gap-4 text-center">
+            <div className="flex size-12 items-center justify-center rounded-full bg-primary/10">
+              <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-6 text-primary" />
+            </div>
+            <h1 className="text-xl font-bold">Listo, contrasena actualizada</h1>
+            <p className="text-sm text-muted-foreground">
+              Ya puedes entrar con tu nueva contrasena.
+            </p>
+            <Button className="w-full" onClick={() => navigate({ to: '/login' })}>
+              Entrar
+            </Button>
           </div>
-          <p className="text-sm text-muted-foreground">Ya puedes entrar con tu nueva contrasena.</p>
-          <Button className="w-full" onClick={() => navigate({ to: '/login' })}>
-            Entrar
-          </Button>
-        </div>
+        </FieldGroup>
       </AuthLayout>
     );
   }
 
   return (
-    <AuthLayout
-      title="Elige tu nueva contrasena"
-      footer={
-        <Link to="/login" className="text-primary hover:underline">
-          Volver a entrar
-        </Link>
-      }
-    >
+    <AuthLayout footer={<a href="/login">Volver a entrar</a>}>
       <ResetPasswordForm token={token} onSuccess={() => setSuccess(true)} />
     </AuthLayout>
   );

@@ -1,10 +1,17 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type SignupInput, signupSchema } from '@rumbo/shared';
+import { Link } from '@tanstack/react-router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { translateAuthError } from '@/features/auth/utils/translate-error';
 import { Button } from '@/shared/components/ui/button';
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/components/ui/field';
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/shared/components/ui/field';
 import { Input } from '@/shared/components/ui/input';
 import { signUp } from '@/shared/lib/auth-client';
 
@@ -51,6 +58,14 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <FieldGroup>
+        <div className="flex flex-col items-center gap-2 text-center">
+          <img src="/favicon.svg" alt="Rumbo" className="size-8" />
+          <h1 className="text-xl font-bold">Vamos a conocernos</h1>
+          <FieldDescription>
+            Ya tienes cuenta? <Link to="/login">Entra aqui</Link>
+          </FieldDescription>
+        </div>
+
         <Field data-invalid={errors.name ? true : undefined}>
           <FieldLabel htmlFor="signup-name">Como te llamas?</FieldLabel>
           <Input
@@ -107,9 +122,11 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
           <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">{error}</div>
         )}
 
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? 'Creando tu cuenta...' : 'Empezar'}
-        </Button>
+        <Field>
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? 'Creando tu cuenta...' : 'Empezar'}
+          </Button>
+        </Field>
       </FieldGroup>
     </form>
   );

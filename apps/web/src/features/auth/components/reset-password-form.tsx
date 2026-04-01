@@ -51,6 +51,11 @@ export function ResetPasswordForm({ token, onSuccess }: ResetPasswordFormProps) 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <FieldGroup>
+        <div className="flex flex-col items-center gap-2 text-center">
+          <img src="/favicon.svg" alt="Rumbo" className="size-8" />
+          <h1 className="text-xl font-bold">Elige tu nueva contrasena</h1>
+        </div>
+
         <Field data-invalid={errors.password ? true : undefined}>
           <FieldLabel htmlFor="reset-password">Tu nueva contrasena</FieldLabel>
           <Input
@@ -81,9 +86,11 @@ export function ResetPasswordForm({ token, onSuccess }: ResetPasswordFormProps) 
           <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">{error}</div>
         )}
 
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? 'Guardando...' : 'Guardar nueva contrasena'}
-        </Button>
+        <Field>
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? 'Guardando...' : 'Guardar nueva contrasena'}
+          </Button>
+        </Field>
       </FieldGroup>
     </form>
   );
