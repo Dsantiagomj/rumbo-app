@@ -8,7 +8,16 @@
     },
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
+      "outputs": ["dist/**"],
+      "env": [
+        "DATABASE_URL",
+        "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
+        "APP_URL",
+        "RESEND_API_KEY",
+        "EMAIL_FROM",
+        "VITE_API_URL"
+      ]
     },
     "lint": {
       "dependsOn": ["^build"]
