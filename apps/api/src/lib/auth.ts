@@ -1,5 +1,6 @@
 import { db } from '@rumbo/db';
 import * as schema from '@rumbo/db/schema';
+import type { User } from 'better-auth';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { sendEmail } from '../services/email.js';
@@ -16,7 +17,7 @@ export const auth = betterAuth({
     requireEmailVerification: true,
     minPasswordLength: 8,
     maxPasswordLength: 128,
-    sendResetPassword: async ({ user, token }) => {
+    sendResetPassword: async ({ user, token }: { user: User; token: string }) => {
       const appUrl = process.env.APP_URL ?? 'http://localhost:5173';
       const resetUrl = `${appUrl}/reset-password?token=${token}`;
       const { subject, html } = getResetPasswordEmail({ userName: user.name, resetUrl });
@@ -26,7 +27,7 @@ export const auth = betterAuth({
   emailVerification: {
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
-    sendVerificationEmail: async ({ user, token }) => {
+    sendVerificationEmail: async ({ user, token }: { user: User; token: string }) => {
       const baseUrl = process.env.BETTER_AUTH_URL ?? 'http://localhost:3001';
       const appUrl = process.env.APP_URL ?? 'http://localhost:5173';
       const verifyUrl = `${baseUrl}/api/auth/verify-email?token=${token}&callbackURL=${encodeURIComponent(appUrl)}`;
