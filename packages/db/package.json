@@ -6,14 +6,15 @@
   "exports": {
     ".": {
       "types": "./src/index.ts",
-      "default": "./src/index.ts"
+      "default": "./dist/index.js"
     },
     "./schema": {
       "types": "./src/schema/index.ts",
-      "default": "./src/schema/index.ts"
+      "default": "./dist/schema/index.js"
     }
   },
   "scripts": {
+    "build": "tsc --project tsconfig.build.json",
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
