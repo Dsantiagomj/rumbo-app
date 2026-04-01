@@ -2,8 +2,8 @@ import { db } from '@rumbo/db';
 import * as schema from '@rumbo/db/schema';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { sendEmail } from '../services/email';
-import { getResetPasswordEmail, getVerifyEmailTemplate } from '../services/email-templates';
+import { sendEmail } from '../services/email.js';
+import { getResetPasswordEmail, getVerifyEmailTemplate } from '../services/email-templates.js';
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {

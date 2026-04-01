@@ -1,6 +1,6 @@
 import type { Session, User } from 'better-auth';
 import type { Context, Next } from 'hono';
-import { auth } from '../lib/auth';
+import { auth } from '../lib/auth.js';
 
 export type AuthVariables = {
   user: User;

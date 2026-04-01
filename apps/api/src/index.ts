@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
-import { createCorsMiddleware } from './middleware/cors';
-import { authRoutes } from './routes/auth';
-import { health } from './routes/health';
+import { createCorsMiddleware } from './middleware/cors.js';
+import { authRoutes } from './routes/auth.js';
+import { health } from './routes/health.js';
 
 const app = new Hono().basePath('/api');
 

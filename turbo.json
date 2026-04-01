@@ -16,6 +16,7 @@
         "APP_URL",
         "RESEND_API_KEY",
         "EMAIL_FROM",
+        "NODEJS_HELPERS",
         "VITE_API_URL"
       ]
     },
@@ -27,6 +28,10 @@
     },
     "test": {
       "dependsOn": ["^build"]
+    },
+    "@rumbo/api#build": {
+      "dependsOn": ["^build"],
+      "outputs": []
     },
     "db:generate": { "cache": false },
     "db:migrate": { "cache": false },

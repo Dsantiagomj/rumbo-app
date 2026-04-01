@@ -5,11 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch --env-file=../../.env src/server.ts",
-    "build": "tsc",
+    "build": "tsc --noEmit",
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@better-auth/drizzle-adapter": "latest",
     "@hono/node-server": "latest",
     "@rumbo/db": "workspace:*",
     "@rumbo/shared": "workspace:*",
