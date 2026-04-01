@@ -16,16 +16,21 @@ export const auth = betterAuth({
     requireEmailVerification: true,
     minPasswordLength: 8,
     maxPasswordLength: 128,
-    sendResetPassword: async ({ user, url }) => {
-      const { subject, html } = getResetPasswordEmail({ userName: user.name, resetUrl: url });
+    sendResetPassword: async ({ user, token }) => {
+      const appUrl = process.env.APP_URL ?? 'http://localhost:5173';
+      const resetUrl = `${appUrl}/reset-password?token=${token}`;
+      const { subject, html } = getResetPasswordEmail({ userName: user.name, resetUrl });
       await sendEmail({ to: user.email, subject, html });
     },
   },
   emailVerification: {
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
-    sendVerificationEmail: async ({ user, url }) => {
-      const { subject, html } = getVerifyEmailTemplate({ userName: user.name, verifyUrl: url });
+    sendVerificationEmail: async ({ user, token }) => {
+      const baseUrl = process.env.BETTER_AUTH_URL ?? 'http://localhost:3001';
+      const appUrl = process.env.APP_URL ?? 'http://localhost:5173';
+      const verifyUrl = `${baseUrl}/api/auth/verify-email?token=${token}&callbackURL=${encodeURIComponent(appUrl)}`;
+      const { subject, html } = getVerifyEmailTemplate({ userName: user.name, verifyUrl });
       await sendEmail({ to: user.email, subject, html });
     },
   },
