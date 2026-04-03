@@ -45,7 +45,10 @@
       "!.turbo",
       "!coverage",
       "!**/*.gen.ts",
-      "!**/.vite"
+      "!**/.vite",
+      "!.claude",
+      "!.kiro",
+      "!.agents"
     ]
   }
 }

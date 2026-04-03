@@ -2,10 +2,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { type ResetPasswordInput, resetPasswordSchema } from '@rumbo/shared';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { PasswordInput } from '@/features/auth/components/password-input';
 import { translateAuthError } from '@/features/auth/utils/translate-error';
 import { Button } from '@/shared/components/ui/button';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/components/ui/field';
-import { Input } from '@/shared/components/ui/input';
 import { authClient } from '@/shared/lib/auth-client';
 
 interface ResetPasswordFormProps {
@@ -58,9 +58,8 @@ export function ResetPasswordForm({ token, onSuccess }: ResetPasswordFormProps) 
 
         <Field data-invalid={errors.password ? true : undefined}>
           <FieldLabel htmlFor="reset-password">Tu nueva contrasena</FieldLabel>
-          <Input
+          <PasswordInput
             id="reset-password"
-            type="password"
             placeholder="Minimo 8 caracteres"
             autoComplete="new-password"
             aria-invalid={!!errors.password}
@@ -71,9 +70,8 @@ export function ResetPasswordForm({ token, onSuccess }: ResetPasswordFormProps) 
 
         <Field data-invalid={errors.confirmPassword ? true : undefined}>
           <FieldLabel htmlFor="reset-confirm-password">Repitela aqui</FieldLabel>
-          <Input
+          <PasswordInput
             id="reset-confirm-password"
-            type="password"
             placeholder="La misma de arriba"
             autoComplete="new-password"
             aria-invalid={!!errors.confirmPassword}

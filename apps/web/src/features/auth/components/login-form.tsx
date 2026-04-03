@@ -3,6 +3,7 @@ import { type LoginInput, loginSchema } from '@rumbo/shared';
 import { Link } from '@tanstack/react-router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { PasswordInput } from '@/features/auth/components/password-input';
 import { translateAuthError } from '@/features/auth/utils/translate-error';
 import { Button } from '@/shared/components/ui/button';
 import {
@@ -88,9 +89,8 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
               La olvidaste?
             </Link>
           </div>
-          <Input
+          <PasswordInput
             id="login-password"
-            type="password"
             placeholder="********"
             autoComplete="current-password"
             aria-invalid={!!errors.password}
