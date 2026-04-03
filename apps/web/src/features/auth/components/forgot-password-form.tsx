@@ -2,7 +2,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { type ForgotPasswordInput, forgotPasswordSchema } from '@rumbo/shared';
-import { Link } from '@tanstack/react-router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { requestPasswordReset } from '@/features/auth/api/forgot-password';
@@ -70,8 +69,7 @@ export function ForgotPasswordForm() {
           <img src="/favicon.svg" alt="Rumbo" className="size-8" />
           <h1 className="text-xl font-bold">No te preocupes</h1>
           <FieldDescription>
-            Te enviamos un enlace para que crees una nueva contrasena.{' '}
-            <Link to="/login">Volver a entrar</Link>
+            Te enviamos un enlace para que crees una nueva contrasena.
           </FieldDescription>
         </div>
 
