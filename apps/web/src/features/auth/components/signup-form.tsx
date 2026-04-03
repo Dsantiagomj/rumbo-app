@@ -3,6 +3,7 @@ import { type SignupInput, signupSchema } from '@rumbo/shared';
 import { Link } from '@tanstack/react-router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { PasswordInput } from '@/features/auth/components/password-input';
 import { translateAuthError } from '@/features/auth/utils/translate-error';
 import { Button } from '@/shared/components/ui/button';
 import {
@@ -94,9 +95,8 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
 
         <Field data-invalid={errors.password ? true : undefined}>
           <FieldLabel htmlFor="signup-password">Elige una contrasena</FieldLabel>
-          <Input
+          <PasswordInput
             id="signup-password"
-            type="password"
             placeholder="Minimo 8 caracteres"
             autoComplete="new-password"
             aria-invalid={!!errors.password}
@@ -107,9 +107,8 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
 
         <Field data-invalid={errors.confirmPassword ? true : undefined}>
           <FieldLabel htmlFor="signup-confirm-password">Repite la contrasena</FieldLabel>
-          <Input
+          <PasswordInput
             id="signup-confirm-password"
-            type="password"
             placeholder="La misma de arriba"
             autoComplete="new-password"
             aria-invalid={!!errors.confirmPassword}
