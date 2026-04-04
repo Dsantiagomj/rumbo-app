@@ -31,6 +31,11 @@
       "sourceType": "github",
       "computedHash": "391693eee67001639ab65474df185da3ea5cf9ee4b99badecfd64561113edbb4"
     },
+    "no-use-effect": {
+      "source": "alejandrobailo/no-use-effect",
+      "sourceType": "github",
+      "computedHash": "149b47d59d4327f349171431ce0478e519b830b022e941f0a22fa951bb442e07"
+    },
     "nodejs-backend-patterns": {
       "source": "wshobson/agents",
       "sourceType": "github",

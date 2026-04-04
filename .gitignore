@@ -34,6 +34,7 @@ coverage/
 .kiro/
 .claude/
 .agents/
+.opencode/
 
 # misc
 *.log
