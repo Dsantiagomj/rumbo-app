@@ -20,6 +20,10 @@ import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-pass
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
 import { Route as SettingsSettingsIndexRouteImport } from './routes/_settings/settings/index'
+import { Route as SettingsSettingsSecurityRouteImport } from './routes/_settings/settings/security'
+import { Route as SettingsSettingsPreferencesRouteImport } from './routes/_settings/settings/preferences'
+import { Route as SettingsSettingsNotificationsRouteImport } from './routes/_settings/settings/notifications'
+import { Route as SettingsSettingsDataRouteImport } from './routes/_settings/settings/data'
 
 const SettingsRoute = SettingsRouteImport.update({
   id: '/_settings',
@@ -73,6 +77,29 @@ const SettingsSettingsIndexRoute = SettingsSettingsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => SettingsSettingsRoute,
 } as any)
+const SettingsSettingsSecurityRoute =
+  SettingsSettingsSecurityRouteImport.update({
+    id: '/security',
+    path: '/security',
+    getParentRoute: () => SettingsSettingsRoute,
+  } as any)
+const SettingsSettingsPreferencesRoute =
+  SettingsSettingsPreferencesRouteImport.update({
+    id: '/preferences',
+    path: '/preferences',
+    getParentRoute: () => SettingsSettingsRoute,
+  } as any)
+const SettingsSettingsNotificationsRoute =
+  SettingsSettingsNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => SettingsSettingsRoute,
+  } as any)
+const SettingsSettingsDataRoute = SettingsSettingsDataRouteImport.update({
+  id: '/data',
+  path: '/data',
+  getParentRoute: () => SettingsSettingsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
@@ -82,6 +109,10 @@ export interface FileRoutesByFullPath {
   '/signup': typeof AuthSignupRoute
   '/verify-email': typeof AuthVerifyEmailRoute
   '/settings': typeof SettingsSettingsRouteWithChildren
+  '/settings/data': typeof SettingsSettingsDataRoute
+  '/settings/notifications': typeof SettingsSettingsNotificationsRoute
+  '/settings/preferences': typeof SettingsSettingsPreferencesRoute
+  '/settings/security': typeof SettingsSettingsSecurityRoute
   '/settings/': typeof SettingsSettingsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -91,6 +122,10 @@ export interface FileRoutesByTo {
   '/reset-password': typeof AuthResetPasswordRoute
   '/signup': typeof AuthSignupRoute
   '/verify-email': typeof AuthVerifyEmailRoute
+  '/settings/data': typeof SettingsSettingsDataRoute
+  '/settings/notifications': typeof SettingsSettingsNotificationsRoute
+  '/settings/preferences': typeof SettingsSettingsPreferencesRoute
+  '/settings/security': typeof SettingsSettingsSecurityRoute
   '/settings': typeof SettingsSettingsIndexRoute
 }
 export interface FileRoutesById {
@@ -105,6 +140,10 @@ export interface FileRoutesById {
   '/_auth/verify-email': typeof AuthVerifyEmailRoute
   '/_settings/settings': typeof SettingsSettingsRouteWithChildren
   '/_app/': typeof AppIndexRoute
+  '/_settings/settings/data': typeof SettingsSettingsDataRoute
+  '/_settings/settings/notifications': typeof SettingsSettingsNotificationsRoute
+  '/_settings/settings/preferences': typeof SettingsSettingsPreferencesRoute
+  '/_settings/settings/security': typeof SettingsSettingsSecurityRoute
   '/_settings/settings/': typeof SettingsSettingsIndexRoute
 }
 export interface FileRouteTypes {
@@ -117,6 +156,10 @@ export interface FileRouteTypes {
     | '/signup'
     | '/verify-email'
     | '/settings'
+    | '/settings/data'
+    | '/settings/notifications'
+    | '/settings/preferences'
+    | '/settings/security'
     | '/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -126,6 +169,10 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/verify-email'
+    | '/settings/data'
+    | '/settings/notifications'
+    | '/settings/preferences'
+    | '/settings/security'
     | '/settings'
   id:
     | '__root__'
@@ -139,6 +186,10 @@ export interface FileRouteTypes {
     | '/_auth/verify-email'
     | '/_settings/settings'
     | '/_app/'
+    | '/_settings/settings/data'
+    | '/_settings/settings/notifications'
+    | '/_settings/settings/preferences'
+    | '/_settings/settings/security'
     | '/_settings/settings/'
   fileRoutesById: FileRoutesById
 }
@@ -227,6 +278,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsSettingsIndexRouteImport
       parentRoute: typeof SettingsSettingsRoute
     }
+    '/_settings/settings/security': {
+      id: '/_settings/settings/security'
+      path: '/security'
+      fullPath: '/settings/security'
+      preLoaderRoute: typeof SettingsSettingsSecurityRouteImport
+      parentRoute: typeof SettingsSettingsRoute
+    }
+    '/_settings/settings/preferences': {
+      id: '/_settings/settings/preferences'
+      path: '/preferences'
+      fullPath: '/settings/preferences'
+      preLoaderRoute: typeof SettingsSettingsPreferencesRouteImport
+      parentRoute: typeof SettingsSettingsRoute
+    }
+    '/_settings/settings/notifications': {
+      id: '/_settings/settings/notifications'
+      path: '/notifications'
+      fullPath: '/settings/notifications'
+      preLoaderRoute: typeof SettingsSettingsNotificationsRouteImport
+      parentRoute: typeof SettingsSettingsRoute
+    }
+    '/_settings/settings/data': {
+      id: '/_settings/settings/data'
+      path: '/data'
+      fullPath: '/settings/data'
+      preLoaderRoute: typeof SettingsSettingsDataRouteImport
+      parentRoute: typeof SettingsSettingsRoute
+    }
   }
 }
 
@@ -259,10 +338,18 @@ const AuthRouteChildren: AuthRouteChildren = {
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface SettingsSettingsRouteChildren {
+  SettingsSettingsDataRoute: typeof SettingsSettingsDataRoute
+  SettingsSettingsNotificationsRoute: typeof SettingsSettingsNotificationsRoute
+  SettingsSettingsPreferencesRoute: typeof SettingsSettingsPreferencesRoute
+  SettingsSettingsSecurityRoute: typeof SettingsSettingsSecurityRoute
   SettingsSettingsIndexRoute: typeof SettingsSettingsIndexRoute
 }
 
 const SettingsSettingsRouteChildren: SettingsSettingsRouteChildren = {
+  SettingsSettingsDataRoute: SettingsSettingsDataRoute,
+  SettingsSettingsNotificationsRoute: SettingsSettingsNotificationsRoute,
+  SettingsSettingsPreferencesRoute: SettingsSettingsPreferencesRoute,
+  SettingsSettingsSecurityRoute: SettingsSettingsSecurityRoute,
   SettingsSettingsIndexRoute: SettingsSettingsIndexRoute,
 }
 

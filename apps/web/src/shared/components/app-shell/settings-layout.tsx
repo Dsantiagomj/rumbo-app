@@ -1,30 +1,9 @@
-import {
-  ArrowLeft01Icon,
-  Database01Icon,
-  LockPasswordIcon,
-  Notification01Icon,
-  PaintBrushIcon,
-  UserIcon,
-} from '@hugeicons/core-free-icons';
-import type { IconSvgElement } from '@hugeicons/react';
+import { ArrowLeft01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Outlet, useNavigate, useRouterState } from '@tanstack/react-router';
+import { SETTINGS_NAV_ITEMS } from '@/shared/lib/navigation';
 import { cn } from '@/shared/lib/utils';
 import { NavLink } from './nav-link';
-
-interface SettingsNavItem {
-  label: string;
-  path: string;
-  icon: IconSvgElement;
-}
-
-const SETTINGS_NAV_ITEMS: SettingsNavItem[] = [
-  { label: 'Cuenta', path: '/settings', icon: UserIcon },
-  { label: 'Preferencias', path: '/settings/preferences', icon: PaintBrushIcon },
-  { label: 'Seguridad', path: '/settings/security', icon: LockPasswordIcon },
-  { label: 'Notificaciones', path: '/settings/notifications', icon: Notification01Icon },
-  { label: 'Datos y privacidad', path: '/settings/data', icon: Database01Icon },
-];
 
 /**
  * Settings layout — adapted from the Rumbo reference project.
@@ -58,12 +37,12 @@ export function SettingsLayout() {
         {/* Settings navigation */}
         <nav className="flex flex-1 flex-col gap-0.5 p-2">
           {SETTINGS_NAV_ITEMS.map((item) => {
-            const isActive = isSettingsNavActive(pathname, item.path);
+            const isActive = isSettingsNavActive(pathname, item.href);
 
             return (
               <NavLink
-                key={item.path}
-                href={item.path}
+                key={item.href}
+                href={item.href}
                 className={cn(
                   'flex items-center gap-3 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors',
                   isActive
@@ -98,12 +77,12 @@ export function SettingsLayout() {
         {/* Mobile settings nav — horizontal pills */}
         <nav className="flex gap-1 overflow-x-auto border-b border-border/40 px-4 py-2 md:hidden">
           {SETTINGS_NAV_ITEMS.map((item) => {
-            const isActive = isSettingsNavActive(pathname, item.path);
+            const isActive = isSettingsNavActive(pathname, item.href);
 
             return (
               <NavLink
-                key={item.path}
-                href={item.path}
+                key={item.href}
+                href={item.href}
                 className={cn(
                   'flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium transition-colors',
                   isActive

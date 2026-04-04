@@ -1,7 +1,12 @@
 import {
   ChartBarIncreasingIcon,
+  Database01Icon,
   Home01Icon,
+  LockPasswordIcon,
+  Notification01Icon,
+  PaintBrushIcon,
   Target01Icon,
+  UserIcon,
   Wallet01Icon,
 } from '@hugeicons/core-free-icons';
 import type { IconSvgElement } from '@hugeicons/react';
@@ -32,4 +37,18 @@ export const PRIMARY_NAV_ITEMS: NavItem[] = [
   { label: 'Transacciones', icon: Wallet01Icon, href: '/transactions' },
   { label: 'Presupuestos', icon: Target01Icon, href: '/budgets' },
   { label: 'Reportes', icon: ChartBarIncreasingIcon, href: '/reports' },
+];
+
+/**
+ * Settings section navigation items.
+ *
+ * Shared across the settings layout (desktop sidebar + mobile pills)
+ * and the mobile drawer (which surfaces these sections directly).
+ */
+export const SETTINGS_NAV_ITEMS: NavItem[] = [
+  { label: 'Cuenta', icon: UserIcon, href: '/settings' },
+  { label: 'Preferencias', icon: PaintBrushIcon, href: '/settings/preferences' },
+  { label: 'Seguridad', icon: LockPasswordIcon, href: '/settings/security' },
+  { label: 'Notificaciones', icon: Notification01Icon, href: '/settings/notifications' },
+  { label: 'Datos y privacidad', icon: Database01Icon, href: '/settings/data' },
 ];

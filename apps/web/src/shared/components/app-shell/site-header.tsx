@@ -1,4 +1,4 @@
-import { Add01Icon, SparklesIcon } from '@hugeicons/core-free-icons';
+import { Add01Icon, Menu01Icon, Search01Icon, SparklesIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { useRouterState } from '@tanstack/react-router';
 import {
@@ -26,14 +26,16 @@ interface SiteHeaderProps {
  *   - Center: Optional search slot (visible per-page via ShellContext)
  *   - Right:  "Agregar movimiento" CTA (shortcut in tooltip) + AI Assistant toggle
  *
- * Mobile layout:
- *   - Left:   Avatar button (opens drawer)
- *   - Center: Brand mark
- *   - Right:  Add Transaction icon + AI Assistant icon
+ * Mobile layout (Gmail-style search-bar header):
+ *   - A rounded search-bar container spanning most of the header:
+ *       Left:   Hamburger menu trigger (opens drawer)
+ *       Center: Rumbo logo + "Buscar en Rumbo" placeholder text
+ *       Right:  Search icon (decorative)
+ *   - Outside the bar (far right): AI Assistant icon button
  *
  * Follows the Rumbo reference project's DesktopHeader exactly.
  */
-export function SiteHeader({ userName }: SiteHeaderProps) {
+export function SiteHeader({ userName: _userName }: SiteHeaderProps) {
   const { setMobileDrawerOpen } = useSidebarState();
   const { assistantOpen, modKey, toggleAssistant, setMobileAssistantOpen } = useShell();
 
@@ -41,15 +43,11 @@ export function SiteHeader({ userName }: SiteHeaderProps) {
   const pageTitle = getPageTitle(pathname);
   const searchSlotVisible = shouldShowSearchSlot(pathname);
 
-  const initials = userName
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
-
   return (
-    <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border px-4 md:h-12 md:border-border/40">
+    <header
+      className="flex shrink-0 items-center gap-2 border-b border-border/60 px-4 md:h-12"
+      style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
+    >
       {/* ─── DESKTOP ─── */}
       <div className="hidden w-full items-center gap-3 md:flex">
         {/* Left: sidebar trigger + breadcrumb */}
@@ -119,42 +117,46 @@ export function SiteHeader({ userName }: SiteHeaderProps) {
         </div>
       </div>
 
-      {/* ─── MOBILE ─── */}
-      <div className="flex w-full items-center md:hidden">
-        {/* Left: avatar opens drawer */}
-        <button
-          type="button"
-          onClick={() => setMobileDrawerOpen(true)}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-semibold text-accent-foreground"
-        >
-          {initials}
-        </button>
-
-        {/* Center: brand mark */}
-        <div className="flex flex-1 items-center justify-center gap-2">
-          <img src="/favicon.svg" alt="Rumbo" className="h-7 w-7 rounded-md" />
-          <span className="text-base font-bold">Rumbo</span>
-        </div>
-
-        {/* Right: compact action buttons */}
-        <div className="flex items-center gap-1">
-          <NavLink
-            href="/transactions/new"
-            className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground"
-          >
-            <HugeiconsIcon icon={Add01Icon} size={20} />
-            <span className="sr-only">Nuevo movimiento</span>
-          </NavLink>
-
+      {/* ─── MOBILE (Gmail-style search-bar header) ─── */}
+      <div className="flex h-14 w-full items-center gap-2 md:hidden">
+        {/* Search-bar shell — rounded container spanning most of the width */}
+        <div className="flex min-w-0 flex-1 items-center gap-1.5 rounded-full bg-muted/60 px-2 py-1.5">
+          {/* Hamburger menu trigger — opens the mobile drawer */}
           <button
             type="button"
-            onClick={() => setMobileAssistantOpen(true)}
-            className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground"
+            onClick={() => setMobileDrawerOpen(true)}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent/50"
+            aria-label="Abrir menu"
           >
-            <HugeiconsIcon icon={SparklesIcon} size={20} />
-            <span className="sr-only">Asistente IA</span>
+            <HugeiconsIcon icon={Menu01Icon} size={20} />
           </button>
+
+          {/* Brand mark + search placeholder text */}
+          <div className="flex min-w-0 flex-1 items-center gap-2 px-1">
+            <img
+              src="/favicon.svg"
+              alt=""
+              className="h-5 w-5 shrink-0 rounded"
+              aria-hidden="true"
+            />
+            <span className="truncate text-sm text-muted-foreground">Buscar en Rumbo</span>
+          </div>
+
+          {/* Search icon — decorative affordance (right end of the bar) */}
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-muted-foreground">
+            <HugeiconsIcon icon={Search01Icon} size={18} />
+          </div>
         </div>
+
+        {/* AI Assistant — sole quick-action outside the search bar */}
+        <button
+          type="button"
+          onClick={() => setMobileAssistantOpen(true)}
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          aria-label="Asistente IA"
+        >
+          <HugeiconsIcon icon={SparklesIcon} size={20} />
+        </button>
       </div>
     </header>
   );
