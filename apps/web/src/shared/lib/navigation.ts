@@ -10,6 +10,7 @@ import {
   Wallet01Icon,
 } from '@hugeicons/core-free-icons';
 import type { IconSvgElement } from '@hugeicons/react';
+import { NAV } from '@/shared/lib/strings';
 
 export interface NavItem {
   label: string;
@@ -33,10 +34,10 @@ export function isNavActive(pathname: string, href: string): boolean {
  * and in the mobile drawer.
  */
 export const PRIMARY_NAV_ITEMS: NavItem[] = [
-  { label: 'Inicio', icon: Home01Icon, href: '/' },
-  { label: 'Transacciones', icon: Wallet01Icon, href: '/transactions' },
-  { label: 'Presupuestos', icon: Target01Icon, href: '/budgets' },
-  { label: 'Reportes', icon: ChartBarIncreasingIcon, href: '/reports' },
+  { label: NAV.home, icon: Home01Icon, href: '/' },
+  { label: NAV.transactions, icon: Wallet01Icon, href: '/transactions' },
+  { label: NAV.budgets, icon: Target01Icon, href: '/budgets' },
+  { label: NAV.reports, icon: ChartBarIncreasingIcon, href: '/reports' },
 ];
 
 /**
@@ -46,9 +47,37 @@ export const PRIMARY_NAV_ITEMS: NavItem[] = [
  * and the mobile drawer (which surfaces these sections directly).
  */
 export const SETTINGS_NAV_ITEMS: NavItem[] = [
-  { label: 'Cuenta', icon: UserIcon, href: '/settings' },
-  { label: 'Preferencias', icon: PaintBrushIcon, href: '/settings/preferences' },
-  { label: 'Seguridad', icon: LockPasswordIcon, href: '/settings/security' },
-  { label: 'Notificaciones', icon: Notification01Icon, href: '/settings/notifications' },
-  { label: 'Datos y privacidad', icon: Database01Icon, href: '/settings/data' },
+  { label: NAV.account, icon: UserIcon, href: '/settings' },
+  { label: NAV.preferences, icon: PaintBrushIcon, href: '/settings/preferences' },
+  { label: NAV.security, icon: LockPasswordIcon, href: '/settings/security' },
+  { label: NAV.notifications, icon: Notification01Icon, href: '/settings/notifications' },
+  { label: NAV.dataPrivacy, icon: Database01Icon, href: '/settings/data' },
 ];
+
+/**
+ * Resolve a pathname to a page title for breadcrumb display.
+ *
+ * Derives titles from the NAV registry so navigation labels and breadcrumbs
+ * are always in sync — no duplicate string maps.
+ */
+export function getPageTitle(pathname: string): string {
+  const segments: Record<string, string> = {
+    '/': NAV.home,
+    '/transactions': NAV.transactions,
+    '/budgets': NAV.budgets,
+    '/reports': NAV.reports,
+    '/settings': NAV.settings,
+  };
+
+  if (segments[pathname]) {
+    return segments[pathname];
+  }
+
+  for (const [path, title] of Object.entries(segments)) {
+    if (path !== '/' && pathname.startsWith(`${path}/`)) {
+      return title;
+    }
+  }
+
+  return NAV.home;
+}

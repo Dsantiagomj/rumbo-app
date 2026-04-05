@@ -1,11 +1,10 @@
 import { serve } from '@hono/node-server';
 import app from './index.js';
+import { env } from './lib/env.js';
 
-const port = Number(process.env.API_PORT) || 3001;
-
-console.log(`RumboApp API starting on http://localhost:${port}`);
+console.log(`RumboApp API starting on http://localhost:${env.API_PORT}`);
 
 serve({
   fetch: app.fetch,
-  port,
+  port: env.API_PORT,
 });

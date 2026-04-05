@@ -25,6 +25,7 @@
     "react-dom": "latest",
     "react-hook-form": "latest",
     "shadcn": "^4.1.2",
+    "sileo": "^0.1.5",
     "tailwind-merge": "^3.5.0",
     "zod": "latest",
     "zustand": "latest"

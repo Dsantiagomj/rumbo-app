@@ -4,6 +4,7 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import { AuthLayout } from '@/features/auth/components/auth-layout';
 import { ResetPasswordForm } from '@/features/auth/components/reset-password-form';
+import { AUTH_COMMON, RESET_PASSWORD } from '@/features/auth/strings';
 import { Button } from '@/shared/components/ui/button';
 import { FieldGroup } from '@/shared/components/ui/field';
 
@@ -27,14 +28,13 @@ function ResetPasswordPage() {
 
   if (tokenError === 'INVALID_TOKEN' || !token) {
     return (
-      <AuthLayout footer={<Link to="/forgot-password">Pedir otro enlace</Link>}>
+      <AuthLayout footer={<Link to="/forgot-password">{RESET_PASSWORD.requestNewLink}</Link>}>
         <FieldGroup>
           <div className="flex flex-col items-center gap-2 text-center">
             <img src="/favicon.svg" alt="Rumbo" className="size-8" />
-            <h1 className="text-xl font-bold">Este enlace ya no funciona</h1>
+            <h1 className="text-xl font-bold">{RESET_PASSWORD.invalidTokenHeading}</h1>
             <p className="text-sm text-muted-foreground">
-              Puede que haya expirado o ya lo hayas usado. Pide un nuevo enlace y te lo enviamos al
-              correo.
+              {RESET_PASSWORD.invalidTokenDescription}
             </p>
           </div>
         </FieldGroup>
@@ -50,12 +50,10 @@ function ResetPasswordPage() {
             <div className="flex size-12 items-center justify-center rounded-full bg-primary/10">
               <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-6 text-primary" />
             </div>
-            <h1 className="text-xl font-bold">Listo, contrasena actualizada</h1>
-            <p className="text-sm text-muted-foreground">
-              Ya puedes entrar con tu nueva contrasena.
-            </p>
+            <h1 className="text-xl font-bold">{RESET_PASSWORD.successHeading}</h1>
+            <p className="text-sm text-muted-foreground">{RESET_PASSWORD.successDescription}</p>
             <Button className="w-full" onClick={() => navigate({ to: '/login' })}>
-              Entrar
+              {RESET_PASSWORD.successAction}
             </Button>
           </div>
         </FieldGroup>
@@ -64,7 +62,7 @@ function ResetPasswordPage() {
   }
 
   return (
-    <AuthLayout footer={<Link to="/login">Volver a entrar</Link>}>
+    <AuthLayout footer={<Link to="/login">{AUTH_COMMON.backToLogin}</Link>}>
       <ResetPasswordForm token={token} onSuccess={() => setSuccess(true)} />
     </AuthLayout>
   );

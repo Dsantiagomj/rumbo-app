@@ -18,9 +18,11 @@ interface PageTransitionProps {
 }
 
 const VARIANT_CLASSES: Record<TransitionVariant, string> = {
-  fade: 'animate-in fade-in-0 duration-300 ease-out',
-  'fade-up': 'animate-in fade-in-0 slide-in-from-bottom-2 duration-300 ease-out',
-  'fade-scale': 'animate-in fade-in-0 zoom-in-[0.98] slide-in-from-bottom-1 duration-300 ease-out',
+  fade: 'motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-300 motion-safe:ease-out',
+  'fade-up':
+    'motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-2 motion-safe:duration-300 motion-safe:ease-out',
+  'fade-scale':
+    'motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-[0.98] motion-safe:slide-in-from-bottom-1 motion-safe:duration-300 motion-safe:ease-out',
 };
 
 /**

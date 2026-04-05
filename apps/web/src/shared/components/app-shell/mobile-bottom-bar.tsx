@@ -2,6 +2,7 @@ import { Add01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { useRouterState } from '@tanstack/react-router';
 import { isNavActive, type NavItem, PRIMARY_NAV_ITEMS } from '@/shared/lib/navigation';
+import { SHELL } from '@/shared/lib/strings';
 import { cn } from '@/shared/lib/utils';
 import { NavLink } from './nav-link';
 
@@ -23,6 +24,7 @@ export function MobileBottomBar() {
 
   return (
     <nav
+      aria-label={SHELL.navMain}
       className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background shadow-[0_-1px_3px_0_rgb(0_0_0/0.05)] md:hidden"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
@@ -58,11 +60,11 @@ function CenterCreateAction() {
       <NavLink
         href="/transactions/new"
         className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/25 active:scale-95 transition-transform"
-        aria-label="Agregar movimiento"
+        aria-label={SHELL.addTransaction}
       >
         <HugeiconsIcon icon={Add01Icon} size={24} />
       </NavLink>
-      <span className="text-[10px] font-medium text-muted-foreground">Agregar</span>
+      <span className="text-[10px] font-medium text-muted-foreground">{SHELL.add}</span>
     </div>
   );
 }
@@ -71,6 +73,7 @@ function BottomBarTab({ item, active }: { item: NavItem; active: boolean }) {
   return (
     <NavLink
       href={item.href}
+      aria-current={active ? 'page' : undefined}
       className={cn(
         'relative flex flex-1 flex-col items-center gap-0.5 py-2 text-[10px] font-medium transition-colors active:opacity-60',
         active ? 'text-primary' : 'text-muted-foreground',

@@ -3,10 +3,12 @@ import { type ResetPasswordInput, resetPasswordSchema } from '@rumbo/shared';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { PasswordInput } from '@/features/auth/components/password-input';
+import { RESET_PASSWORD } from '@/features/auth/strings';
 import { translateAuthError } from '@/features/auth/utils/translate-error';
 import { Button } from '@/shared/components/ui/button';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/components/ui/field';
 import { authClient } from '@/shared/lib/auth-client';
+import { COMMON } from '@/shared/lib/strings';
 
 interface ResetPasswordFormProps {
   token: string;
@@ -36,13 +38,13 @@ export function ResetPasswordForm({ token, onSuccess }: ResetPasswordFormProps) 
       });
 
       if (result.error) {
-        setError(translateAuthError(result.error.message ?? 'Error al restablecer la contrasena'));
+        setError(translateAuthError(result.error.message ?? RESET_PASSWORD.fallbackError));
         return;
       }
 
       onSuccess?.();
     } catch {
-      setError('Ocurrio un error inesperado');
+      setError(COMMON.unexpectedError);
     } finally {
       setLoading(false);
     }
@@ -53,40 +55,48 @@ export function ResetPasswordForm({ token, onSuccess }: ResetPasswordFormProps) 
       <FieldGroup>
         <div className="flex flex-col items-center gap-2 text-center">
           <img src="/favicon.svg" alt="Rumbo" className="size-8" />
-          <h1 className="text-xl font-bold">Elige tu nueva contrasena</h1>
+          <h1 className="text-xl font-bold">{RESET_PASSWORD.heading}</h1>
         </div>
 
         <Field data-invalid={errors.password ? true : undefined}>
-          <FieldLabel htmlFor="reset-password">Tu nueva contrasena</FieldLabel>
+          <FieldLabel htmlFor="reset-password">{RESET_PASSWORD.passwordLabel}</FieldLabel>
           <PasswordInput
             id="reset-password"
-            placeholder="Minimo 8 caracteres"
+            placeholder={RESET_PASSWORD.passwordPlaceholder}
             autoComplete="new-password"
             aria-invalid={!!errors.password}
+            aria-describedby={errors.password ? 'reset-password-error' : undefined}
             {...register('password')}
           />
-          <FieldError>{errors.password?.message}</FieldError>
+          <FieldError id="reset-password-error">{errors.password?.message}</FieldError>
         </Field>
 
         <Field data-invalid={errors.confirmPassword ? true : undefined}>
-          <FieldLabel htmlFor="reset-confirm-password">Repitela aqui</FieldLabel>
+          <FieldLabel htmlFor="reset-confirm-password">{RESET_PASSWORD.confirmLabel}</FieldLabel>
           <PasswordInput
             id="reset-confirm-password"
-            placeholder="La misma de arriba"
+            placeholder={RESET_PASSWORD.confirmPlaceholder}
             autoComplete="new-password"
             aria-invalid={!!errors.confirmPassword}
+            aria-describedby={errors.confirmPassword ? 'reset-confirm-error' : undefined}
             {...register('confirmPassword')}
           />
-          <FieldError>{errors.confirmPassword?.message}</FieldError>
+          <FieldError id="reset-confirm-error">{errors.confirmPassword?.message}</FieldError>
         </Field>
 
         {error && (
-          <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">{error}</div>
+          <div
+            role="alert"
+            aria-live="assertive"
+            className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive"
+          >
+            {error}
+          </div>
         )}
 
         <Field>
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Guardando...' : 'Guardar nueva contrasena'}
+            {loading ? RESET_PASSWORD.submitLoading : RESET_PASSWORD.submit}
           </Button>
         </Field>
       </FieldGroup>

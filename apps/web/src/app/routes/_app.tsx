@@ -5,6 +5,7 @@ import { MobileAssistantSheet } from '@/shared/components/app-shell/mobile-assis
 import { MobileBottomBar } from '@/shared/components/app-shell/mobile-bottom-bar';
 import { MobileDrawer } from '@/shared/components/app-shell/mobile-drawer';
 import { SiteHeader } from '@/shared/components/app-shell/site-header';
+import { SkipToContent } from '@/shared/components/app-shell/skip-to-content';
 import { SidebarInset, SidebarProvider } from '@/shared/components/ui/sidebar';
 import { TooltipProvider } from '@/shared/components/ui/tooltip';
 import { ShellProvider, useShell } from '@/shared/hooks/use-shell-context';
@@ -45,6 +46,8 @@ function AppLayout() {
     <ShellProvider>
       <TooltipProvider>
         <SidebarProvider>
+          <SkipToContent />
+
           {/* Desktop sidebar — hidden on mobile, uses shadcn Sidebar for collapse state */}
           <AppSidebar />
 
@@ -73,9 +76,9 @@ function AppContent() {
 
   return (
     <div className="flex flex-1 overflow-hidden">
-      <div className="flex-1 overflow-y-auto p-4 pb-20 md:p-6 md:pb-6">
+      <main id="main-content" className="flex-1 overflow-y-auto p-4 pb-20 md:p-6 md:pb-6">
         <Outlet />
-      </div>
+      </main>
       <AssistantPanel
         open={assistantOpen}
         width={assistantWidth}

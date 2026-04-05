@@ -1,6 +1,7 @@
 import { Resend } from 'resend';
+import { env } from '../lib/env.js';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(env.RESEND_API_KEY);
 
 interface SendEmailOptions {
   to: string;
@@ -9,10 +10,8 @@ interface SendEmailOptions {
 }
 
 export async function sendEmail({ to, subject, html }: SendEmailOptions) {
-  const from = process.env.EMAIL_FROM ?? 'RumboApp <noreply@dsmj.dev>';
-
   const { error } = await resend.emails.send({
-    from,
+    from: env.EMAIL_FROM,
     to,
     subject,
     html,

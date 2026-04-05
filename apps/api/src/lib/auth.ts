@@ -5,6 +5,7 @@ import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { sendEmail } from '../services/email.js';
 import { getResetPasswordEmail, getVerifyEmailTemplate } from '../services/email-templates.js';
+import { env } from './env.js';
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -18,8 +19,7 @@ export const auth = betterAuth({
     minPasswordLength: 8,
     maxPasswordLength: 128,
     sendResetPassword: async ({ user, token }: { user: User; token: string }) => {
-      const appUrl = process.env.APP_URL ?? 'http://localhost:5173';
-      const resetUrl = `${appUrl}/reset-password?token=${token}`;
+      const resetUrl = `${env.APP_URL}/reset-password?token=${token}`;
       const { subject, html } = getResetPasswordEmail({ userName: user.name, resetUrl });
       await sendEmail({ to: user.email, subject, html });
     },
@@ -28,9 +28,7 @@ export const auth = betterAuth({
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, token }: { user: User; token: string }) => {
-      const baseUrl = process.env.BETTER_AUTH_URL ?? 'http://localhost:3001';
-      const appUrl = process.env.APP_URL ?? 'http://localhost:5173';
-      const verifyUrl = `${baseUrl}/api/auth/verify-email?token=${token}&callbackURL=${encodeURIComponent(appUrl)}`;
+      const verifyUrl = `${env.BETTER_AUTH_URL}/api/auth/verify-email?token=${token}&callbackURL=${encodeURIComponent(env.APP_URL)}`;
       const { subject, html } = getVerifyEmailTemplate({ userName: user.name, verifyUrl });
       await sendEmail({ to: user.email, subject, html });
     },
@@ -43,7 +41,7 @@ export const auth = betterAuth({
       maxAge: 60 * 5, // 5 minutes
     },
   },
-  trustedOrigins: [process.env.APP_URL ?? 'http://localhost:5173'],
+  trustedOrigins: [env.APP_URL],
 });
 
 export type Auth = typeof auth;

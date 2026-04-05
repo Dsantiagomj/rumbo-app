@@ -14,6 +14,8 @@ import {
 import { useSidebarState } from '@/shared/hooks/use-sidebar-state';
 import { signOut } from '@/shared/lib/auth-client';
 import { isNavActive, SETTINGS_NAV_ITEMS } from '@/shared/lib/navigation';
+import { SHELL, TOAST } from '@/shared/lib/strings';
+import { toast } from '@/shared/lib/toast';
 import { cn } from '@/shared/lib/utils';
 import { NavLink } from './nav-link';
 
@@ -57,13 +59,18 @@ export function MobileDrawer({ userName, userEmail }: MobileDrawerProps) {
           <SheetTitle className="flex items-center justify-between">
             <span className="flex items-center gap-2 text-lg font-bold">
               <img src="/favicon.svg" alt="" className="size-6" />
-              Rumbo
+              {SHELL.brandName}
             </span>
-            <Button variant="ghost" size="icon-sm" onClick={() => setMobileDrawerOpen(false)}>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => setMobileDrawerOpen(false)}
+              aria-label={SHELL.closeMenu}
+            >
               <HugeiconsIcon icon={Cancel01Icon} size={18} />
             </Button>
           </SheetTitle>
-          <SheetDescription className="sr-only">Cuenta y configuracion</SheetDescription>
+          <SheetDescription className="sr-only">{SHELL.drawerDescription}</SheetDescription>
         </SheetHeader>
 
         {/* User profile card */}
@@ -80,7 +87,7 @@ export function MobileDrawer({ userName, userEmail }: MobileDrawerProps) {
         <Separator />
 
         {/* Settings section nav — mirrors the settings layout sidebar */}
-        <nav className="flex flex-col gap-1 p-3">
+        <nav aria-label={SHELL.navDrawer} className="flex flex-col gap-1 p-3">
           {SETTINGS_NAV_ITEMS.map((item) => {
             const active = isNavActive(pathname, item.href);
 
@@ -89,6 +96,7 @@ export function MobileDrawer({ userName, userEmail }: MobileDrawerProps) {
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileDrawerOpen(false)}
+                aria-current={active ? 'page' : undefined}
                 className={cn(
                   'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors active:opacity-60',
                   active
@@ -108,13 +116,18 @@ export function MobileDrawer({ userName, userEmail }: MobileDrawerProps) {
           <button
             type="button"
             onClick={async () => {
-              await signOut();
-              void navigate({ to: '/login' });
+              try {
+                await signOut();
+                toast.success({ title: TOAST.signOutSuccess });
+                void navigate({ to: '/login' });
+              } catch {
+                toast.error({ title: TOAST.signOutError });
+              }
             }}
             className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent/50 active:opacity-60"
           >
             <HugeiconsIcon icon={Logout01Icon} size={20} />
-            Cerrar sesion
+            {SHELL.signOut}
           </button>
         </div>
       </SheetContent>
