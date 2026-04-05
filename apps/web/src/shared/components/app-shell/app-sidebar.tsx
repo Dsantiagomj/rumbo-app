@@ -13,6 +13,7 @@ import {
   SidebarMenuItem,
 } from '@/shared/components/ui/sidebar';
 import { isNavActive, PRIMARY_NAV_ITEMS } from '@/shared/lib/navigation';
+import { NAV, SHELL } from '@/shared/lib/strings';
 import { NavLink } from './nav-link';
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {}
@@ -37,7 +38,7 @@ export function AppSidebar(props: AppSidebarProps) {
         <div className="flex h-14 items-center gap-2 px-3.5">
           <img src="/favicon.svg" alt="Rumbo" className="h-7 w-7 shrink-0 rounded-md" />
           <span className="flex-1 text-base font-bold text-foreground whitespace-nowrap truncate group-data-[collapsible=icon]:hidden">
-            Rumbo
+            {SHELL.brandName}
           </span>
         </div>
       </SidebarHeader>
@@ -47,20 +48,20 @@ export function AppSidebar(props: AppSidebarProps) {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {PRIMARY_NAV_ITEMS.map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isNavActive(pathname, item.href)}
-                    tooltip={item.label}
-                  >
-                    <NavLink href={item.href}>
-                      <HugeiconsIcon icon={item.icon} />
-                      <span>{item.label}</span>
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {PRIMARY_NAV_ITEMS.map((item) => {
+                const active = isNavActive(pathname, item.href);
+
+                return (
+                  <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton asChild isActive={active} tooltip={item.label}>
+                      <NavLink href={item.href} aria-current={active ? 'page' : undefined}>
+                        <HugeiconsIcon icon={item.icon} />
+                        <span>{item.label}</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -72,7 +73,8 @@ export function AppSidebar(props: AppSidebarProps) {
           <SidebarMenuItem>
             <SidebarMenuButton
               isActive={isNavActive(pathname, '/settings')}
-              tooltip="Configuracion"
+              tooltip={NAV.settings}
+              aria-current={isNavActive(pathname, '/settings') ? 'page' : undefined}
               onClick={() => {
                 if (!isNavActive(pathname, '/settings')) {
                   void navigate({ to: '/settings' });
@@ -80,7 +82,7 @@ export function AppSidebar(props: AppSidebarProps) {
               }}
             >
               <HugeiconsIcon icon={Settings01Icon} />
-              <span>Configuracion</span>
+              <span>{NAV.settings}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

@@ -4,6 +4,7 @@ import { Link } from '@tanstack/react-router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { PasswordInput } from '@/features/auth/components/password-input';
+import { SIGNUP } from '@/features/auth/strings';
 import { translateAuthError } from '@/features/auth/utils/translate-error';
 import { Button } from '@/shared/components/ui/button';
 import {
@@ -15,6 +16,7 @@ import {
 } from '@/shared/components/ui/field';
 import { Input } from '@/shared/components/ui/input';
 import { signUp } from '@/shared/lib/auth-client';
+import { COMMON } from '@/shared/lib/strings';
 
 interface SignupFormProps {
   onSuccess?: () => void;
@@ -44,13 +46,13 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
       });
 
       if (result.error) {
-        setError(translateAuthError(result.error.message ?? 'Error al crear la cuenta'));
+        setError(translateAuthError(result.error.message ?? SIGNUP.fallbackError));
         return;
       }
 
       onSuccess?.();
     } catch {
-      setError('Ocurrio un error inesperado');
+      setError(COMMON.unexpectedError);
     } finally {
       setLoading(false);
     }
@@ -61,69 +63,79 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
       <FieldGroup>
         <div className="flex flex-col items-center gap-2 text-center">
           <img src="/favicon.svg" alt="Rumbo" className="size-8" />
-          <h1 className="text-xl font-bold">Vamos a conocernos</h1>
+          <h1 className="text-xl font-bold">{SIGNUP.heading}</h1>
           <FieldDescription>
-            Ya tienes cuenta? <Link to="/login">Entra aqui</Link>
+            {SIGNUP.hasAccount} <Link to="/login">{SIGNUP.goToLogin}</Link>
           </FieldDescription>
         </div>
 
         <Field data-invalid={errors.name ? true : undefined}>
-          <FieldLabel htmlFor="signup-name">Como te llamas?</FieldLabel>
+          <FieldLabel htmlFor="signup-name">{SIGNUP.nameLabel}</FieldLabel>
           <Input
             id="signup-name"
             type="text"
-            placeholder="Tu nombre o como prefieres ser llamado"
+            placeholder={SIGNUP.namePlaceholder}
             autoComplete="name"
             aria-invalid={!!errors.name}
+            aria-describedby={errors.name ? 'signup-name-error' : undefined}
             {...register('name')}
           />
-          <FieldError>{errors.name?.message}</FieldError>
+          <FieldError id="signup-name-error">{errors.name?.message}</FieldError>
         </Field>
 
         <Field data-invalid={errors.email ? true : undefined}>
-          <FieldLabel htmlFor="signup-email">Tu email</FieldLabel>
+          <FieldLabel htmlFor="signup-email">{SIGNUP.emailLabel}</FieldLabel>
           <Input
             id="signup-email"
             type="email"
-            placeholder="tu@email.com"
+            placeholder={SIGNUP.emailPlaceholder}
             autoComplete="email"
             aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? 'signup-email-error' : undefined}
             {...register('email')}
           />
-          <FieldError>{errors.email?.message}</FieldError>
+          <FieldError id="signup-email-error">{errors.email?.message}</FieldError>
         </Field>
 
         <Field data-invalid={errors.password ? true : undefined}>
-          <FieldLabel htmlFor="signup-password">Elige una contrasena</FieldLabel>
+          <FieldLabel htmlFor="signup-password">{SIGNUP.passwordLabel}</FieldLabel>
           <PasswordInput
             id="signup-password"
-            placeholder="Minimo 8 caracteres"
+            placeholder={SIGNUP.passwordPlaceholder}
             autoComplete="new-password"
             aria-invalid={!!errors.password}
+            aria-describedby={errors.password ? 'signup-password-error' : undefined}
             {...register('password')}
           />
-          <FieldError>{errors.password?.message}</FieldError>
+          <FieldError id="signup-password-error">{errors.password?.message}</FieldError>
         </Field>
 
         <Field data-invalid={errors.confirmPassword ? true : undefined}>
-          <FieldLabel htmlFor="signup-confirm-password">Repite la contrasena</FieldLabel>
+          <FieldLabel htmlFor="signup-confirm-password">{SIGNUP.confirmPasswordLabel}</FieldLabel>
           <PasswordInput
             id="signup-confirm-password"
-            placeholder="La misma de arriba"
+            placeholder={SIGNUP.confirmPasswordPlaceholder}
             autoComplete="new-password"
             aria-invalid={!!errors.confirmPassword}
+            aria-describedby={errors.confirmPassword ? 'signup-confirm-error' : undefined}
             {...register('confirmPassword')}
           />
-          <FieldError>{errors.confirmPassword?.message}</FieldError>
+          <FieldError id="signup-confirm-error">{errors.confirmPassword?.message}</FieldError>
         </Field>
 
         {error && (
-          <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">{error}</div>
+          <div
+            role="alert"
+            aria-live="assertive"
+            className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive"
+          >
+            {error}
+          </div>
         )}
 
         <Field>
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Creando tu cuenta...' : 'Empezar'}
+            {loading ? SIGNUP.submitLoading : SIGNUP.submit}
           </Button>
         </Field>
       </FieldGroup>

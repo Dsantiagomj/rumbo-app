@@ -1,6 +1,7 @@
 import { SparklesIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import type { MouseEvent as ReactMouseEvent } from 'react';
+import { SHELL } from '@/shared/lib/strings';
 
 export interface AssistantPanelProps {
   open: boolean;
@@ -53,7 +54,7 @@ export function AssistantPanel({ open, width, isDragging, onDragStart }: Assista
       <aside
         className={`hidden md:flex flex-col overflow-hidden border-l border-border/40 ${
           open ? '' : 'w-0 border-l-0'
-        } ${isDragging ? '' : 'transition-[width] duration-200'}`}
+        } ${isDragging ? '' : 'motion-safe:transition-[width] motion-safe:duration-200'}`}
         style={open ? { width } : undefined}
       >
         <div
@@ -63,11 +64,8 @@ export function AssistantPanel({ open, width, isDragging, onDragStart }: Assista
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent">
             <HugeiconsIcon icon={SparklesIcon} size={24} className="text-muted-foreground" />
           </div>
-          <h3 className="text-sm font-semibold text-foreground">Proximamente</h3>
-          <p className="text-sm text-muted-foreground max-w-xs">
-            Tu asistente financiero con IA te ayudara a analizar gastos, categorizar transacciones y
-            gestionar presupuestos.
-          </p>
+          <h3 className="text-sm font-semibold text-foreground">{SHELL.comingSoon}</h3>
+          <p className="text-sm text-muted-foreground max-w-xs">{SHELL.comingSoonAssistant}</p>
         </div>
       </aside>
     </>

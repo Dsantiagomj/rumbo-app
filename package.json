@@ -21,13 +21,6 @@
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json,css}": "biome check --write --no-errors-on-unmatched"
   },
-  "dependencies": {
-    "@better-auth/drizzle-adapter": "latest",
-    "@rumbo/db": "workspace:*",
-    "better-auth": "latest",
-    "hono": "latest",
-    "resend": "latest"
-  },
   "devDependencies": {
     "@biomejs/biome": "latest",
     "@types/node": "latest",

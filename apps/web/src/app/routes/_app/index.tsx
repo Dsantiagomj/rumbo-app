@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { DASHBOARD, NAV } from '@/shared/lib/strings';
 
 export const Route = createFileRoute('/_app/')({
   component: DashboardPage,
@@ -15,8 +16,8 @@ function DashboardPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Inicio</h1>
-        <p className="text-muted-foreground">Bienvenido de vuelta, {session.user.name}</p>
+        <h1 className="text-2xl font-bold tracking-tight">{NAV.home}</h1>
+        <p className="text-muted-foreground">{DASHBOARD.welcomeBack(session.user.name)}</p>
       </div>
 
       {/* Placeholder cards — will be replaced with real dashboard widgets */}
@@ -33,18 +34,16 @@ function DashboardPage() {
       </div>
 
       <div className="rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
-        <h2 className="text-lg font-semibold">Primeros pasos</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Tu panel financiero se esta configurando. Empieza agregando tu primera transaccion.
-        </p>
+        <h2 className="text-lg font-semibold">{DASHBOARD.gettingStartedTitle}</h2>
+        <p className="mt-2 text-sm text-muted-foreground">{DASHBOARD.gettingStartedDescription}</p>
       </div>
     </div>
   );
 }
 
 const PLACEHOLDER_CARDS = [
-  { title: 'Balance', value: '$0' },
-  { title: 'Ingresos', value: '$0' },
-  { title: 'Gastos', value: '$0' },
-  { title: 'Ahorros', value: '$0' },
+  { title: DASHBOARD.cards.balance, value: '$0' },
+  { title: DASHBOARD.cards.income, value: '$0' },
+  { title: DASHBOARD.cards.expenses, value: '$0' },
+  { title: DASHBOARD.cards.savings, value: '$0' },
 ] as const;

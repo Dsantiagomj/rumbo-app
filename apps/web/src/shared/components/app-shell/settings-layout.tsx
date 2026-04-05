@@ -2,6 +2,7 @@ import { ArrowLeft01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Outlet, useNavigate, useRouterState } from '@tanstack/react-router';
 import { SETTINGS_NAV_ITEMS } from '@/shared/lib/navigation';
+import { NAV, SHELL } from '@/shared/lib/strings';
 import { cn } from '@/shared/lib/utils';
 import { NavLink } from './nav-link';
 
@@ -30,12 +31,12 @@ export function SettingsLayout() {
             }}
           >
             <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
-            Volver a la app
+            {SHELL.backToApp}
           </button>
         </div>
 
         {/* Settings navigation */}
-        <nav className="flex flex-1 flex-col gap-0.5 p-2">
+        <nav aria-label={SHELL.navSettings} className="flex flex-1 flex-col gap-0.5 p-2">
           {SETTINGS_NAV_ITEMS.map((item) => {
             const isActive = isSettingsNavActive(pathname, item.href);
 
@@ -43,6 +44,7 @@ export function SettingsLayout() {
               <NavLink
                 key={item.href}
                 href={item.href}
+                aria-current={isActive ? 'page' : undefined}
                 className={cn(
                   'flex items-center gap-3 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors',
                   isActive
@@ -64,6 +66,7 @@ export function SettingsLayout() {
         <header className="flex h-14 items-center gap-3 border-b border-border px-4 md:hidden">
           <button
             type="button"
+            aria-label={SHELL.backToApp}
             className="flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             onClick={() => {
               void navigate({ to: '/' });
@@ -71,11 +74,14 @@ export function SettingsLayout() {
           >
             <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
           </button>
-          <span className="text-base font-semibold">Configuracion</span>
+          <span className="text-base font-semibold">{NAV.settings}</span>
         </header>
 
         {/* Mobile settings nav — horizontal pills */}
-        <nav className="flex gap-1 overflow-x-auto border-b border-border/40 px-4 py-2 md:hidden">
+        <nav
+          aria-label={SHELL.navSettingsMobile}
+          className="flex gap-1 overflow-x-auto border-b border-border/40 px-4 py-2 md:hidden"
+        >
           {SETTINGS_NAV_ITEMS.map((item) => {
             const isActive = isSettingsNavActive(pathname, item.href);
 
@@ -83,6 +89,7 @@ export function SettingsLayout() {
               <NavLink
                 key={item.href}
                 href={item.href}
+                aria-current={isActive ? 'page' : undefined}
                 className={cn(
                   'flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium transition-colors',
                   isActive

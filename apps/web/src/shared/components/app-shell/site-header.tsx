@@ -12,6 +12,8 @@ import { SidebarTrigger } from '@/shared/components/ui/sidebar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/components/ui/tooltip';
 import { useShell } from '@/shared/hooks/use-shell-context';
 import { useSidebarState } from '@/shared/hooks/use-sidebar-state';
+import { getPageTitle } from '@/shared/lib/navigation';
+import { SHELL } from '@/shared/lib/strings';
 import { NavLink } from './nav-link';
 
 interface SiteHeaderProps {
@@ -75,13 +77,13 @@ export function SiteHeader({ userName: _userName }: SiteHeaderProps) {
               <Button variant="default" size="sm" asChild>
                 <NavLink href="/transactions/new">
                   <HugeiconsIcon icon={Add01Icon} size={14} data-icon="inline-start" />
-                  Agregar movimiento
+                  {SHELL.addTransaction}
                 </NavLink>
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
               <span className="flex items-center gap-2">
-                Nuevo movimiento
+                {SHELL.newTransaction}
                 <kbd className="rounded bg-background/20 px-1.5 py-0.5 font-mono text-[10px]">
                   {modKey}N
                 </kbd>
@@ -100,14 +102,14 @@ export function SiteHeader({ userName: _userName }: SiteHeaderProps) {
                     ? 'bg-accent text-foreground'
                     : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
                 }`}
-                aria-label={assistantOpen ? 'Cerrar asistente' : 'Abrir asistente'}
+                aria-label={assistantOpen ? SHELL.closeAssistant : SHELL.openAssistant}
               >
                 <HugeiconsIcon icon={SparklesIcon} size={18} />
               </button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
               <span className="flex items-center gap-2">
-                Asistente IA
+                {SHELL.assistantLabel}
                 <kbd className="rounded bg-background/20 px-1.5 py-0.5 font-mono text-[10px]">
                   {modKey}I
                 </kbd>
@@ -126,7 +128,7 @@ export function SiteHeader({ userName: _userName }: SiteHeaderProps) {
             type="button"
             onClick={() => setMobileDrawerOpen(true)}
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent/50"
-            aria-label="Abrir menu"
+            aria-label={SHELL.openMenu}
           >
             <HugeiconsIcon icon={Menu01Icon} size={20} />
           </button>
@@ -139,7 +141,9 @@ export function SiteHeader({ userName: _userName }: SiteHeaderProps) {
               className="h-5 w-5 shrink-0 rounded"
               aria-hidden="true"
             />
-            <span className="truncate text-sm text-muted-foreground">Buscar en Rumbo</span>
+            <span className="truncate text-sm text-muted-foreground">
+              {SHELL.searchMobilePlaceholder}
+            </span>
           </div>
 
           {/* Search icon — decorative affordance (right end of the bar) */}
@@ -153,7 +157,7 @@ export function SiteHeader({ userName: _userName }: SiteHeaderProps) {
           type="button"
           onClick={() => setMobileAssistantOpen(true)}
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-          aria-label="Asistente IA"
+          aria-label={SHELL.assistantLabel}
         >
           <HugeiconsIcon icon={SparklesIcon} size={20} />
         </button>
@@ -191,39 +195,12 @@ function SearchSlotPlaceholder({ modKey }: { modKey: string }) {
           clipRule="evenodd"
         />
       </svg>
-      <span className="flex-1">Buscar...</span>
+      <span className="flex-1">{SHELL.searchPlaceholder}</span>
       <kbd className="pointer-events-none shrink-0 rounded border border-border/80 bg-background/60 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground/70">
         {modKey}K
       </kbd>
     </div>
   );
-}
-
-// ---------------------------------------------------------------------------
-// Page title resolver
-// ---------------------------------------------------------------------------
-
-/** Map pathname to a page title for breadcrumb display. */
-function getPageTitle(pathname: string): string {
-  const segments: Record<string, string> = {
-    '/': 'Inicio',
-    '/transactions': 'Transacciones',
-    '/budgets': 'Presupuestos',
-    '/reports': 'Reportes',
-    '/settings': 'Configuracion',
-  };
-
-  if (segments[pathname]) {
-    return segments[pathname];
-  }
-
-  for (const [path, title] of Object.entries(segments)) {
-    if (path !== '/' && pathname.startsWith(`${path}/`)) {
-      return title;
-    }
-  }
-
-  return 'Inicio';
 }
 
 function shouldShowSearchSlot(pathname: string): boolean {

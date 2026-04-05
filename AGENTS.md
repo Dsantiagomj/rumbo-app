@@ -79,11 +79,13 @@ features/{domain}/
 
 - Use Zod schemas from `@rumbo/shared` as the source of truth for data models
 - Use direct imports (no barrel files except package entry points)
-- Keep files under 300 lines
+- Keep files under 300 lines (exception: vendored/generated files — see below)
 - Use descriptive file names (kebab-case)
 - Put business logic in services, not route handlers
 - Use TypeScript strict mode everywhere
 - Write all code in English (variables, functions, comments, docs)
+- Write all user-facing UI copy in Spanish (see "UI Copy & Strings" below)
+- Access environment variables through the validated env layer (`lib/env.ts`), not raw `process.env`
 
 ### DON'T
 
@@ -92,6 +94,12 @@ features/{domain}/
 - Put business logic in route handlers — use services
 - Use `any` / `unknown` without justification
 - Use `npm` — always `pnpm`
+- Scatter raw `process.env` reads outside `lib/env.ts` — add new vars to the Zod schema instead
+- Normalize temporary workarounds — mark them with `// HACK:` or `// TEMP:` and a reason
+
+### Vendored & Generated Files
+
+Files matching `*.gen.ts` or checked-in vendored code (e.g. Shadcn/ui primitives) may exceed the 300-line limit and are excluded from Biome via `biome.json`. When adding new exceptions, update both the `files.includes` ignore list in `biome.json` and note them here.
 
 ## Code Style
 
@@ -103,6 +111,14 @@ features/{domain}/
 | Types/Interfaces | `PascalCase` |
 | Constants | `SCREAMING_SNAKE_CASE` |
 | CSS | Tailwind v4 utility classes |
+
+## UI Copy & Strings
+
+- **Language**: All user-facing copy is in Spanish. No full i18n framework — the project uses a lightweight typed string registry instead.
+- **Registry location**: `shared/lib/strings.ts` for shell/global copy; `features/{domain}/strings.ts` for feature-specific copy.
+- **Convention**: Keys are English, values are Spanish. No runtime locale switching.
+- **New copy**: Always add strings to the appropriate registry file. Do not scatter inline Spanish strings in components.
+- **Toasts**: Standardized on **Sileo** (`shared/lib/toast.ts`) with **top-center** placement. Import `toast` from `@/shared/lib/toast`, never import Sileo directly.
 
 ## Environment Variables
 
