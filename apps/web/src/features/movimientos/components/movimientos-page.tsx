@@ -1,21 +1,11 @@
-import type { MovimientoCreateInput } from '@rumbo/shared';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
-import { useState } from 'react';
 import { Button } from '@/shared/components/ui/button';
 import { toast } from '@/shared/lib/toast';
-import { deleteMovimientoMutationOptions, updateMovimientoMutationOptions } from '../api/mutations';
+import { deleteMovimientoMutationOptions } from '../api/mutations';
 import { movimientosQueryOptions } from '../api/queries';
 import { MOVIMIENTOS } from '../strings';
-import {
-  formatCurrency,
-  getCurrentMonthValue,
-  getMonthFromMovimiento,
-  getMonthLabel,
-  getMovimientoFormValues,
-  mapMovimientosError,
-} from '../utils';
-import { MovimientoForm } from './movimiento-form';
+import { formatCurrency, getCurrentMonthValue, getMonthLabel, mapMovimientosError } from '../utils';
 import { MovimientosList } from './movimientos-list';
 
 interface MovimientosPageProps {
@@ -24,13 +14,10 @@ interface MovimientosPageProps {
 }
 
 export function MovimientosPage({ month, onMonthChange }: MovimientosPageProps) {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
   const movimientosQuery = useQuery(movimientosQueryOptions(month));
-  const updateMovimientoMutation = useMutation(updateMovimientoMutationOptions());
   const deleteMovimientoMutation = useMutation(deleteMovimientoMutationOptions());
 
   const items = movimientosQuery.data?.items ?? [];
-  const selectedMovimiento = items.find((item) => item.id === selectedId) ?? null;
   const total = items.reduce(
     (sum, item) => sum + (item.type === 'income' ? item.amount : item.amount * -1),
     0,
@@ -45,30 +32,7 @@ export function MovimientosPage({ month, onMonthChange }: MovimientosPageProps) 
 
     try {
       await deleteMovimientoMutation.mutateAsync(id);
-      setSelectedId((current) => (current === id ? null : current));
       toast.success({ title: MOVIMIENTOS.feedback.deleteSuccess });
-    } catch (error) {
-      toast.error({ title: mapMovimientosError(error) });
-    }
-  }
-
-  async function handleUpdate(values: MovimientoCreateInput) {
-    if (!selectedMovimiento) {
-      return;
-    }
-
-    try {
-      const response = await updateMovimientoMutation.mutateAsync({
-        id: selectedMovimiento.id,
-        input: values,
-      });
-      const nextMonth = getMonthFromMovimiento(response.item);
-
-      if (nextMonth !== month) {
-        setSelectedId(null);
-      }
-
-      toast.success({ title: MOVIMIENTOS.feedback.updateSuccess });
     } catch (error) {
       toast.error({ title: mapMovimientosError(error) });
     }
@@ -115,9 +79,7 @@ export function MovimientosPage({ month, onMonthChange }: MovimientosPageProps) 
             </div>
 
             <div className="rounded-xl bg-muted/30 p-4">
-              <p className="text-sm text-muted-foreground">
-                {selectedMovimiento ? MOVIMIENTOS.summary.selectedHint : MOVIMIENTOS.listTitle}
-              </p>
+              <p className="text-sm text-muted-foreground">{MOVIMIENTOS.listTitle}</p>
               <p className="mt-1 text-2xl font-semibold">
                 {MOVIMIENTOS.summary.totalMovimientos(items.length)}
               </p>
@@ -139,50 +101,7 @@ export function MovimientosPage({ month, onMonthChange }: MovimientosPageProps) 
       ) : null}
 
       {!movimientosQuery.isLoading && !movimientosQuery.isError ? (
-        <div className="grid gap-6 xl:grid-cols-[minmax(0,1.55fr)_minmax(320px,0.95fr)]">
-          <section className="overflow-hidden rounded-3xl border border-border/60 bg-card p-5 shadow-sm">
-            <div className="mb-5 flex flex-col gap-1">
-              <h2 className="text-lg font-semibold tracking-tight">{MOVIMIENTOS.listTitle}</h2>
-              <p className="text-sm text-muted-foreground">{MOVIMIENTOS.listDescription}</p>
-            </div>
-
-            <MovimientosList
-              items={items}
-              selectedId={selectedId}
-              onEdit={(item) => setSelectedId(item.id)}
-              onDelete={(item) => void handleDelete(item.id)}
-            />
-          </section>
-
-          <section className="rounded-3xl border border-border/60 bg-card p-5 shadow-sm xl:sticky xl:top-4 xl:self-start">
-            <div className="mb-5 flex flex-col gap-1">
-              <h2 className="text-lg font-semibold tracking-tight">
-                {selectedMovimiento ? MOVIMIENTOS.editTitle : MOVIMIENTOS.editorPlaceholderTitle}
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                {selectedMovimiento
-                  ? MOVIMIENTOS.editDescription
-                  : MOVIMIENTOS.editorPlaceholderDescription}
-              </p>
-            </div>
-
-            {selectedMovimiento ? (
-              <MovimientoForm
-                key={selectedMovimiento.id}
-                mode="edit"
-                initialValues={getMovimientoFormValues(selectedMovimiento)}
-                onSubmit={handleUpdate}
-                onCancel={() => setSelectedId(null)}
-                submitLabel={MOVIMIENTOS.form.submitUpdate}
-                isPending={updateMovimientoMutation.isPending}
-              />
-            ) : (
-              <p className="py-8 text-center text-sm text-muted-foreground">
-                {MOVIMIENTOS.editorPlaceholderDescription}
-              </p>
-            )}
-          </section>
-        </div>
+        <MovimientosList items={items} onDelete={(item) => void handleDelete(item.id)} />
       ) : null}
     </div>
   );

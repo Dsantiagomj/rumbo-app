@@ -1,9 +1,4 @@
-import type {
-  Movimiento,
-  MovimientoCreateInput,
-  MovimientoType,
-  MovimientoUpdateInput,
-} from '@rumbo/shared';
+import type { MovimientoCreateInput, MovimientoUpdateInput } from '@rumbo/shared';
 
 export interface MovimientosRouteSearch {
   month?: string;
@@ -16,16 +11,4 @@ export interface MovimientoFormProps {
   onCancel?: () => void;
   submitLabel: string;
   isPending: boolean;
-}
-
-export interface MovimientoListItemProps {
-  item: Movimiento;
-  isSelected: boolean;
-  onEdit: (item: Movimiento) => void;
-  onDelete: (item: Movimiento) => void;
-}
-
-export interface MovimientoTypeOption {
-  value: MovimientoType;
-  label: string;
 }

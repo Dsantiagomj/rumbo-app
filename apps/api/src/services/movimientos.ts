@@ -124,6 +124,22 @@ export function createMovimientosService(database: MovimientosDb) {
       return mapMovimientoRecord(updated);
     },
 
+    async getMovimiento(userId: string, movimientoId: string): Promise<Movimiento> {
+      const rows = await database
+        .select()
+        .from(movimientos)
+        .where(and(eq(movimientos.id, movimientoId), eq(movimientos.userId, userId)))
+        .orderBy(desc(movimientos.createdAt));
+
+      const row = rows[0];
+
+      if (!row) {
+        throw new MovimientoServiceError('Movimiento no encontrado', 404);
+      }
+
+      return mapMovimientoRecord(row);
+    },
+
     async deleteMovimiento(userId: string, movimientoId: string): Promise<void> {
       const [deleted] = await database
         .delete(movimientos)
@@ -140,6 +156,11 @@ export function createMovimientosService(database: MovimientosDb) {
 export async function listMovimientos(userId: string, query: { month?: string }) {
   const service = createMovimientosService(await getMovimientosDb());
   return service.listMovimientos(userId, query);
+}
+
+export async function getMovimiento(userId: string, movimientoId: string) {
+  const service = createMovimientosService(await getMovimientosDb());
+  return service.getMovimiento(userId, movimientoId);
 }
 
 export async function createMovimiento(userId: string, input: unknown) {

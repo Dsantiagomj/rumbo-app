@@ -86,6 +86,33 @@ export function getMovimientoFormValues(item: Movimiento): MovimientoCreateInput
   };
 }
 
+export function formatDayHeader(dateString: string) {
+  const [yearString, monthString, dayString] = dateString.split('-');
+  const date = new Date(Number(yearString), Number(monthString) - 1, Number(dayString));
+
+  return new Intl.DateTimeFormat('es-AR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  }).format(date);
+}
+
+export function groupByDate(items: Movimiento[]) {
+  const groups: Array<{ date: string; label: string; items: Movimiento[] }> = [];
+  let current: (typeof groups)[number] | null = null;
+
+  for (const item of items) {
+    if (current && current.date === item.date) {
+      current.items.push(item);
+    } else {
+      current = { date: item.date, label: formatDayHeader(item.date), items: [item] };
+      groups.push(current);
+    }
+  }
+
+  return groups;
+}
+
 export function mapMovimientosError(error: unknown) {
   if (error instanceof Error && error.message) {
     return error.message;

@@ -13,6 +13,7 @@ import { type AuthVariables, authMiddleware } from '../middleware/auth.js';
 import {
   createMovimiento,
   deleteMovimiento,
+  getMovimiento,
   listMovimientos,
   MovimientoServiceError,
   updateMovimiento,
@@ -20,6 +21,7 @@ import {
 
 type MovimientosRouteService = {
   listMovimientos: typeof listMovimientos;
+  getMovimiento: typeof getMovimiento;
   createMovimiento: typeof createMovimiento;
   updateMovimiento: typeof updateMovimiento;
   deleteMovimiento: typeof deleteMovimiento;
@@ -32,6 +34,7 @@ type CreateMovimientosRoutesOptions = {
 
 const defaultMovimientosRouteService: MovimientosRouteService = {
   listMovimientos,
+  getMovimiento,
   createMovimiento,
   updateMovimiento,
   deleteMovimiento,
@@ -43,6 +46,18 @@ export function createMovimientosRoutes(options: CreateMovimientosRoutesOptions 
   const service = options.service ?? defaultMovimientosRouteService;
 
   movimientosRoutes.use('*', routeAuthMiddleware);
+
+  movimientosRoutes.get('/movimientos/:id', async (c) => {
+    try {
+      const user = c.get('user');
+      const { id } = movimientoIdParamsSchema.parse(c.req.param());
+      const item = await service.getMovimiento(user.id, id);
+
+      return c.json(movimientoMutationResponseSchema.parse({ item }));
+    } catch (error) {
+      return handleRouteError(c, error);
+    }
+  });
 
   movimientosRoutes.get('/movimientos', async (c) => {
     try {

@@ -27,6 +27,7 @@ import { Route as SettingsSettingsPreferencesRouteImport } from './routes/_setti
 import { Route as SettingsSettingsNotificationsRouteImport } from './routes/_settings/settings/notifications'
 import { Route as SettingsSettingsDataRouteImport } from './routes/_settings/settings/data'
 import { Route as AppTransactionsNewRouteImport } from './routes/_app/transactions/new'
+import { Route as AppTransactionsIdRouteImport } from './routes/_app/transactions/$id'
 
 const SettingsRoute = SettingsRouteImport.update({
   id: '/_settings',
@@ -118,6 +119,11 @@ const AppTransactionsNewRoute = AppTransactionsNewRouteImport.update({
   path: '/new',
   getParentRoute: () => AppTransactionsRoute,
 } as any)
+const AppTransactionsIdRoute = AppTransactionsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppTransactionsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
@@ -128,6 +134,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof AuthSignupRoute
   '/verify-email': typeof AuthVerifyEmailRoute
   '/settings': typeof SettingsSettingsRouteWithChildren
+  '/transactions/$id': typeof AppTransactionsIdRoute
   '/transactions/new': typeof AppTransactionsNewRoute
   '/settings/data': typeof SettingsSettingsDataRoute
   '/settings/notifications': typeof SettingsSettingsNotificationsRoute
@@ -143,6 +150,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof AuthResetPasswordRoute
   '/signup': typeof AuthSignupRoute
   '/verify-email': typeof AuthVerifyEmailRoute
+  '/transactions/$id': typeof AppTransactionsIdRoute
   '/transactions/new': typeof AppTransactionsNewRoute
   '/settings/data': typeof SettingsSettingsDataRoute
   '/settings/notifications': typeof SettingsSettingsNotificationsRoute
@@ -164,6 +172,7 @@ export interface FileRoutesById {
   '/_auth/verify-email': typeof AuthVerifyEmailRoute
   '/_settings/settings': typeof SettingsSettingsRouteWithChildren
   '/_app/': typeof AppIndexRoute
+  '/_app/transactions/$id': typeof AppTransactionsIdRoute
   '/_app/transactions/new': typeof AppTransactionsNewRoute
   '/_settings/settings/data': typeof SettingsSettingsDataRoute
   '/_settings/settings/notifications': typeof SettingsSettingsNotificationsRoute
@@ -183,6 +192,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/verify-email'
     | '/settings'
+    | '/transactions/$id'
     | '/transactions/new'
     | '/settings/data'
     | '/settings/notifications'
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/verify-email'
+    | '/transactions/$id'
     | '/transactions/new'
     | '/settings/data'
     | '/settings/notifications'
@@ -218,6 +229,7 @@ export interface FileRouteTypes {
     | '/_auth/verify-email'
     | '/_settings/settings'
     | '/_app/'
+    | '/_app/transactions/$id'
     | '/_app/transactions/new'
     | '/_settings/settings/data'
     | '/_settings/settings/notifications'
@@ -361,15 +373,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppTransactionsNewRouteImport
       parentRoute: typeof AppTransactionsRoute
     }
+    '/_app/transactions/$id': {
+      id: '/_app/transactions/$id'
+      path: '/$id'
+      fullPath: '/transactions/$id'
+      preLoaderRoute: typeof AppTransactionsIdRouteImport
+      parentRoute: typeof AppTransactionsRoute
+    }
   }
 }
 
 interface AppTransactionsRouteChildren {
+  AppTransactionsIdRoute: typeof AppTransactionsIdRoute
   AppTransactionsNewRoute: typeof AppTransactionsNewRoute
   AppTransactionsIndexRoute: typeof AppTransactionsIndexRoute
 }
 
 const AppTransactionsRouteChildren: AppTransactionsRouteChildren = {
+  AppTransactionsIdRoute: AppTransactionsIdRoute,
   AppTransactionsNewRoute: AppTransactionsNewRoute,
   AppTransactionsIndexRoute: AppTransactionsIndexRoute,
 }

@@ -32,12 +32,11 @@ export const MOVIMIENTOS = {
   actions: {
     edit: 'Editar',
     delete: 'Eliminar',
-    closeEditor: 'Cerrar edición',
     backToList: 'Volver a movimientos',
+    menuLabel: 'Acciones del movimiento',
   },
   summary: {
     netBalance: 'Balance neto',
-    selectedHint: 'Movimiento seleccionado',
     totalMovimientos: (count: number) => `${count} movimientos`,
   },
   feedback: {
@@ -48,7 +47,4 @@ export const MOVIMIENTOS = {
     deleteSuccess: 'Movimiento eliminado correctamente',
     deleteConfirm: '¿Seguro que quieres eliminar este movimiento?',
   },
-  editorPlaceholderTitle: 'Selecciona un movimiento para editar',
-  editorPlaceholderDescription:
-    'Puedes editar o eliminar cualquier movimiento propio desde la lista del mes.',
 } as const;

@@ -18,6 +18,7 @@ import { createMovimientosRoutes } from './movimientos.js';
 
 type RouteService = {
   listMovimientos: (userId: string, query: MovimientoListQuery) => Promise<MovimientoListResponse>;
+  getMovimiento: (userId: string, movimientoId: string) => Promise<Movimiento>;
   createMovimiento: (userId: string, input: unknown) => Promise<Movimiento>;
   updateMovimiento: (userId: string, movimientoId: string, input: unknown) => Promise<Movimiento>;
   deleteMovimiento: (userId: string, movimientoId: string) => Promise<void>;
@@ -328,6 +329,18 @@ function createInMemoryStore() {
       item.updatedAt = new Date('2026-04-07T13:00:00.000Z').toISOString();
 
       return item;
+    },
+    async getMovimiento(userId, movimientoId) {
+      const record = records.find(
+        (currentRecord) =>
+          currentRecord.userId === userId && currentRecord.item.id === movimientoId,
+      );
+
+      if (!record) {
+        throw new Error('Movimiento no encontrado');
+      }
+
+      return record.item;
     },
     async deleteMovimiento(userId, movimientoId) {
       const index = records.findIndex(
