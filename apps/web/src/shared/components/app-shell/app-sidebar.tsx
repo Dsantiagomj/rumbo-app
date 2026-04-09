@@ -1,6 +1,6 @@
 import { Settings01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { useNavigate, useRouterState } from '@tanstack/react-router';
+import { Link, useNavigate, useRouterState } from '@tanstack/react-router';
 import {
   Sidebar,
   SidebarContent,
@@ -50,6 +50,19 @@ export function AppSidebar(props: AppSidebarProps) {
             <SidebarMenu>
               {PRIMARY_NAV_ITEMS.map((item) => {
                 const active = isNavActive(pathname, item.href);
+
+                if (item.href === '/transactions') {
+                  return (
+                    <SidebarMenuItem key={item.href}>
+                      <SidebarMenuButton asChild isActive={active} tooltip={item.label}>
+                        <Link to="/transactions" aria-current={active ? 'page' : undefined}>
+                          <HugeiconsIcon icon={item.icon} />
+                          <span>{item.label}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                }
 
                 return (
                   <SidebarMenuItem key={item.href}>

@@ -15,7 +15,7 @@
 
 export const NAV = {
   home: 'Inicio',
-  transactions: 'Transacciones',
+  transactions: 'Movimientos',
   budgets: 'Presupuestos',
   reports: 'Reportes',
   settings: 'Configuracion',

@@ -1,6 +1,6 @@
 import { Add01Icon, Menu01Icon, Search01Icon, SparklesIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { useRouterState } from '@tanstack/react-router';
+import { Link, useRouterState } from '@tanstack/react-router';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,7 +14,6 @@ import { useShell } from '@/shared/hooks/use-shell-context';
 import { useSidebarState } from '@/shared/hooks/use-sidebar-state';
 import { getPageTitle } from '@/shared/lib/navigation';
 import { SHELL } from '@/shared/lib/strings';
-import { NavLink } from './nav-link';
 
 interface SiteHeaderProps {
   userName: string;
@@ -75,10 +74,10 @@ export function SiteHeader({ userName: _userName }: SiteHeaderProps) {
           <Tooltip>
             <TooltipTrigger asChild>
               <Button variant="default" size="sm" asChild>
-                <NavLink href="/transactions/new">
+                <Link to="/transactions/new">
                   <HugeiconsIcon icon={Add01Icon} size={14} data-icon="inline-start" />
                   {SHELL.addTransaction}
-                </NavLink>
+                </Link>
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">

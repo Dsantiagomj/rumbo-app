@@ -35,6 +35,7 @@ coverage/
 .claude/
 .agents/
 .opencode/
+.atl/
 
 # misc
 *.log
