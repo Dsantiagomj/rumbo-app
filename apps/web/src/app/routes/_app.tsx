@@ -75,7 +75,7 @@ function AppContent() {
   const { assistantOpen, assistantWidth, isDragging, handleDragStart } = useShell();
 
   return (
-    <div className="flex flex-1 overflow-hidden">
+    <div className="flex flex-1 overflow-hidden border-t-0 md:border-t">
       <main id="main-content" className="flex-1 overflow-y-auto p-4 pb-20 md:p-6 md:pb-6">
         <Outlet />
       </main>

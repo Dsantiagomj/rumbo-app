@@ -19,11 +19,15 @@ import { Route as AuthSignupRouteImport } from './routes/_auth/signup'
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
+import { Route as AppTransactionsRouteImport } from './routes/_app/transactions'
 import { Route as SettingsSettingsIndexRouteImport } from './routes/_settings/settings/index'
+import { Route as AppTransactionsIndexRouteImport } from './routes/_app/transactions/index'
 import { Route as SettingsSettingsSecurityRouteImport } from './routes/_settings/settings/security'
 import { Route as SettingsSettingsPreferencesRouteImport } from './routes/_settings/settings/preferences'
 import { Route as SettingsSettingsNotificationsRouteImport } from './routes/_settings/settings/notifications'
 import { Route as SettingsSettingsDataRouteImport } from './routes/_settings/settings/data'
+import { Route as AppTransactionsNewRouteImport } from './routes/_app/transactions/new'
+import { Route as AppTransactionsIdRouteImport } from './routes/_app/transactions/$id'
 
 const SettingsRoute = SettingsRouteImport.update({
   id: '/_settings',
@@ -72,10 +76,20 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => AuthRoute,
 } as any)
+const AppTransactionsRoute = AppTransactionsRouteImport.update({
+  id: '/transactions',
+  path: '/transactions',
+  getParentRoute: () => AppRoute,
+} as any)
 const SettingsSettingsIndexRoute = SettingsSettingsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => SettingsSettingsRoute,
+} as any)
+const AppTransactionsIndexRoute = AppTransactionsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppTransactionsRoute,
 } as any)
 const SettingsSettingsSecurityRoute =
   SettingsSettingsSecurityRouteImport.update({
@@ -100,19 +114,33 @@ const SettingsSettingsDataRoute = SettingsSettingsDataRouteImport.update({
   path: '/data',
   getParentRoute: () => SettingsSettingsRoute,
 } as any)
+const AppTransactionsNewRoute = AppTransactionsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AppTransactionsRoute,
+} as any)
+const AppTransactionsIdRoute = AppTransactionsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppTransactionsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
+  '/transactions': typeof AppTransactionsRouteWithChildren
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/signup': typeof AuthSignupRoute
   '/verify-email': typeof AuthVerifyEmailRoute
   '/settings': typeof SettingsSettingsRouteWithChildren
+  '/transactions/$id': typeof AppTransactionsIdRoute
+  '/transactions/new': typeof AppTransactionsNewRoute
   '/settings/data': typeof SettingsSettingsDataRoute
   '/settings/notifications': typeof SettingsSettingsNotificationsRoute
   '/settings/preferences': typeof SettingsSettingsPreferencesRoute
   '/settings/security': typeof SettingsSettingsSecurityRoute
+  '/transactions/': typeof AppTransactionsIndexRoute
   '/settings/': typeof SettingsSettingsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -122,10 +150,13 @@ export interface FileRoutesByTo {
   '/reset-password': typeof AuthResetPasswordRoute
   '/signup': typeof AuthSignupRoute
   '/verify-email': typeof AuthVerifyEmailRoute
+  '/transactions/$id': typeof AppTransactionsIdRoute
+  '/transactions/new': typeof AppTransactionsNewRoute
   '/settings/data': typeof SettingsSettingsDataRoute
   '/settings/notifications': typeof SettingsSettingsNotificationsRoute
   '/settings/preferences': typeof SettingsSettingsPreferencesRoute
   '/settings/security': typeof SettingsSettingsSecurityRoute
+  '/transactions': typeof AppTransactionsIndexRoute
   '/settings': typeof SettingsSettingsIndexRoute
 }
 export interface FileRoutesById {
@@ -133,6 +164,7 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/_auth': typeof AuthRouteWithChildren
   '/_settings': typeof SettingsRouteWithChildren
+  '/_app/transactions': typeof AppTransactionsRouteWithChildren
   '/_auth/forgot-password': typeof AuthForgotPasswordRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/reset-password': typeof AuthResetPasswordRoute
@@ -140,26 +172,33 @@ export interface FileRoutesById {
   '/_auth/verify-email': typeof AuthVerifyEmailRoute
   '/_settings/settings': typeof SettingsSettingsRouteWithChildren
   '/_app/': typeof AppIndexRoute
+  '/_app/transactions/$id': typeof AppTransactionsIdRoute
+  '/_app/transactions/new': typeof AppTransactionsNewRoute
   '/_settings/settings/data': typeof SettingsSettingsDataRoute
   '/_settings/settings/notifications': typeof SettingsSettingsNotificationsRoute
   '/_settings/settings/preferences': typeof SettingsSettingsPreferencesRoute
   '/_settings/settings/security': typeof SettingsSettingsSecurityRoute
+  '/_app/transactions/': typeof AppTransactionsIndexRoute
   '/_settings/settings/': typeof SettingsSettingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/transactions'
     | '/forgot-password'
     | '/login'
     | '/reset-password'
     | '/signup'
     | '/verify-email'
     | '/settings'
+    | '/transactions/$id'
+    | '/transactions/new'
     | '/settings/data'
     | '/settings/notifications'
     | '/settings/preferences'
     | '/settings/security'
+    | '/transactions/'
     | '/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -169,16 +208,20 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/verify-email'
+    | '/transactions/$id'
+    | '/transactions/new'
     | '/settings/data'
     | '/settings/notifications'
     | '/settings/preferences'
     | '/settings/security'
+    | '/transactions'
     | '/settings'
   id:
     | '__root__'
     | '/_app'
     | '/_auth'
     | '/_settings'
+    | '/_app/transactions'
     | '/_auth/forgot-password'
     | '/_auth/login'
     | '/_auth/reset-password'
@@ -186,10 +229,13 @@ export interface FileRouteTypes {
     | '/_auth/verify-email'
     | '/_settings/settings'
     | '/_app/'
+    | '/_app/transactions/$id'
+    | '/_app/transactions/new'
     | '/_settings/settings/data'
     | '/_settings/settings/notifications'
     | '/_settings/settings/preferences'
     | '/_settings/settings/security'
+    | '/_app/transactions/'
     | '/_settings/settings/'
   fileRoutesById: FileRoutesById
 }
@@ -271,12 +317,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_app/transactions': {
+      id: '/_app/transactions'
+      path: '/transactions'
+      fullPath: '/transactions'
+      preLoaderRoute: typeof AppTransactionsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_settings/settings/': {
       id: '/_settings/settings/'
       path: '/'
       fullPath: '/settings/'
       preLoaderRoute: typeof SettingsSettingsIndexRouteImport
       parentRoute: typeof SettingsSettingsRoute
+    }
+    '/_app/transactions/': {
+      id: '/_app/transactions/'
+      path: '/'
+      fullPath: '/transactions/'
+      preLoaderRoute: typeof AppTransactionsIndexRouteImport
+      parentRoute: typeof AppTransactionsRoute
     }
     '/_settings/settings/security': {
       id: '/_settings/settings/security'
@@ -306,14 +366,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsSettingsDataRouteImport
       parentRoute: typeof SettingsSettingsRoute
     }
+    '/_app/transactions/new': {
+      id: '/_app/transactions/new'
+      path: '/new'
+      fullPath: '/transactions/new'
+      preLoaderRoute: typeof AppTransactionsNewRouteImport
+      parentRoute: typeof AppTransactionsRoute
+    }
+    '/_app/transactions/$id': {
+      id: '/_app/transactions/$id'
+      path: '/$id'
+      fullPath: '/transactions/$id'
+      preLoaderRoute: typeof AppTransactionsIdRouteImport
+      parentRoute: typeof AppTransactionsRoute
+    }
   }
 }
 
+interface AppTransactionsRouteChildren {
+  AppTransactionsIdRoute: typeof AppTransactionsIdRoute
+  AppTransactionsNewRoute: typeof AppTransactionsNewRoute
+  AppTransactionsIndexRoute: typeof AppTransactionsIndexRoute
+}
+
+const AppTransactionsRouteChildren: AppTransactionsRouteChildren = {
+  AppTransactionsIdRoute: AppTransactionsIdRoute,
+  AppTransactionsNewRoute: AppTransactionsNewRoute,
+  AppTransactionsIndexRoute: AppTransactionsIndexRoute,
+}
+
+const AppTransactionsRouteWithChildren = AppTransactionsRoute._addFileChildren(
+  AppTransactionsRouteChildren,
+)
+
 interface AppRouteChildren {
+  AppTransactionsRoute: typeof AppTransactionsRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppTransactionsRoute: AppTransactionsRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
 }
 
