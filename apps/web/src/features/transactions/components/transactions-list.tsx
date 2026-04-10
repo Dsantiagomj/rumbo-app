@@ -1,6 +1,6 @@
 import { Delete01Icon, MoreHorizontalIcon, PencilEdit01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import type { Movimiento } from '@rumbo/shared';
+import type { Transaction } from '@rumbo/shared';
 import { Link } from '@tanstack/react-router';
 import {
   DropdownMenu,
@@ -10,26 +10,26 @@ import {
   DropdownMenuTrigger,
 } from '@/shared/components/ui/dropdown-menu';
 import { cn } from '@/shared/lib/utils';
-import { MOVIMIENTOS } from '../strings';
+import { TRANSACTIONS } from '../strings';
 import { formatCurrency, groupByDate } from '../utils';
 
-interface MovimientosListProps {
-  items: Movimiento[];
+interface TransactionsListProps {
+  items: Transaction[];
   searchQuery?: string;
-  onDelete: (item: Movimiento) => void;
+  onDelete: (item: Transaction) => void;
 }
 
-export function MovimientosList({ items, searchQuery, onDelete }: MovimientosListProps) {
+export function TransactionsList({ items, searchQuery, onDelete }: TransactionsListProps) {
   if (!items.length) {
     const isSearchEmptyState = Boolean(searchQuery);
 
     return (
       <div className="py-8 text-center">
         <h3 className="font-medium">
-          {isSearchEmptyState ? MOVIMIENTOS.emptySearchTitle : MOVIMIENTOS.emptyTitle}
+          {isSearchEmptyState ? TRANSACTIONS.emptySearchTitle : TRANSACTIONS.emptyTitle}
         </h3>
         <p className="mt-2 text-sm text-muted-foreground">
-          {isSearchEmptyState ? MOVIMIENTOS.emptySearchDescription : MOVIMIENTOS.emptyDescription}
+          {isSearchEmptyState ? TRANSACTIONS.emptySearchDescription : TRANSACTIONS.emptyDescription}
         </p>
       </div>
     );
@@ -86,7 +86,7 @@ export function MovimientosList({ items, searchQuery, onDelete }: MovimientosLis
                     <button
                       type="button"
                       className="inline-flex size-8 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-all hover:bg-muted hover:text-foreground focus-visible:opacity-100 group-hover/row:opacity-100 sm:[.group\/row:hover_&]:opacity-100 [div:hover>&]:opacity-100"
-                      aria-label={MOVIMIENTOS.actions.menuLabel}
+                      aria-label={TRANSACTIONS.actions.menuLabel}
                     >
                       <HugeiconsIcon icon={MoreHorizontalIcon} size={16} />
                     </button>
@@ -95,7 +95,7 @@ export function MovimientosList({ items, searchQuery, onDelete }: MovimientosLis
                     <DropdownMenuItem asChild>
                       <Link to="/transactions/$id" params={{ id: item.id }}>
                         <HugeiconsIcon icon={PencilEdit01Icon} size={14} />
-                        {MOVIMIENTOS.actions.edit}
+                        {TRANSACTIONS.actions.edit}
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
@@ -104,7 +104,7 @@ export function MovimientosList({ items, searchQuery, onDelete }: MovimientosLis
                       onClick={() => onDelete(item)}
                     >
                       <HugeiconsIcon icon={Delete01Icon} size={14} />
-                      {MOVIMIENTOS.actions.delete}
+                      {TRANSACTIONS.actions.delete}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

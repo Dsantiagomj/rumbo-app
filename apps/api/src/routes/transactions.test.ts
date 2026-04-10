@@ -1,58 +1,65 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
-  type Movimiento,
-  type MovimientoCreateInput,
-  type MovimientoListQuery,
-  type MovimientoListResponse,
-  type MovimientoUpdateInput,
-  movimientoDeleteResponseSchema,
-  movimientoListResponseSchema,
-  movimientoMutationResponseSchema,
+  type Transaction,
+  type TransactionCreateInput,
+  type TransactionListQuery,
+  type TransactionListResponse,
+  type TransactionUpdateInput,
+  transactionDeleteResponseSchema,
+  transactionListResponseSchema,
+  transactionMutationResponseSchema,
 } from '@rumbo/shared';
 import type { Session, User } from 'better-auth';
 import { Hono } from 'hono';
 import { createAuthMiddleware } from '../middleware/auth.js';
-import { MovimientoServiceError } from '../services/movimientos.js';
-import { createMovimientosRoutes } from './movimientos.js';
+import { TransactionServiceError } from '../services/transactions.js';
+import { createTransactionsRoutes } from './transactions.js';
 
 type RouteService = {
-  listMovimientos: (userId: string, query: MovimientoListQuery) => Promise<MovimientoListResponse>;
-  getMovimiento: (userId: string, movimientoId: string) => Promise<Movimiento>;
-  createMovimiento: (userId: string, input: unknown) => Promise<Movimiento>;
-  updateMovimiento: (userId: string, movimientoId: string, input: unknown) => Promise<Movimiento>;
-  deleteMovimiento: (userId: string, movimientoId: string) => Promise<void>;
+  listTransactions: (
+    userId: string,
+    query: TransactionListQuery,
+  ) => Promise<TransactionListResponse>;
+  getTransaction: (userId: string, transactionId: string) => Promise<Transaction>;
+  createTransaction: (userId: string, input: unknown) => Promise<Transaction>;
+  updateTransaction: (
+    userId: string,
+    transactionId: string,
+    input: unknown,
+  ) => Promise<Transaction>;
+  deleteTransaction: (userId: string, transactionId: string) => Promise<void>;
 };
 
-type InMemoryMovimientoRecord = {
+type InMemoryTransactionRecord = {
   userId: string;
-  item: Movimiento;
+  item: Transaction;
 };
 
-test('GET /api/movimientos rejects unauthenticated requests', async () => {
+test('GET /api/transactions rejects unauthenticated requests', async () => {
   const app = createTestApp({
     authSessionResolver: async () => null,
   });
 
-  const response = await app.request('/api/movimientos');
+  const response = await app.request('/api/transactions');
 
   assert.equal(response.status, 401);
   assert.deepEqual(await response.json(), { error: 'Unauthorized' });
 });
 
-test('POST /api/movimientos returns 400 for invalid payloads before touching the service', async () => {
+test('POST /api/transactions returns 400 for invalid payloads before touching the service', async () => {
   let createCalled = false;
   const app = createTestApp({
     authSessionResolver: async ({ headers }) => createSession(headers.get('x-user-id') ?? 'user-1'),
     service: {
-      createMovimiento: async () => {
+      createTransaction: async () => {
         createCalled = true;
         throw new Error('Unexpected create');
       },
     },
   });
 
-  const response = await app.request('/api/movimientos', {
+  const response = await app.request('/api/transactions', {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
@@ -73,14 +80,14 @@ test('POST /api/movimientos returns 400 for invalid payloads before touching the
   assert.equal(createCalled, false);
 });
 
-test('POST /api/movimientos returns 201 with the mutation payload shape', async () => {
+test('POST /api/transactions returns 201 with the mutation payload shape', async () => {
   const store = createInMemoryStore();
   const app = createTestApp({
     authSessionResolver: async ({ headers }) => createSession(headers.get('x-user-id') ?? 'user-1'),
     service: store.service,
   });
 
-  const response = await app.request('/api/movimientos', {
+  const response = await app.request('/api/transactions', {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
@@ -96,33 +103,33 @@ test('POST /api/movimientos returns 201 with the mutation payload shape', async 
   });
 
   assert.equal(response.status, 201);
-  const payload = movimientoMutationResponseSchema.parse(await response.json());
+  const payload = transactionMutationResponseSchema.parse(await response.json());
 
   assert.equal(payload.item.amount, 123.45);
   assert.equal(payload.item.category, 'Comida');
   assert.equal(payload.item.note, 'Supermercado');
 });
 
-test('GET /api/movimientos filters the list by authenticated user and requested month', async () => {
+test('GET /api/transactions filters the list by authenticated user and requested month', async () => {
   const store = createInMemoryStore();
   const currentMonth = getTodayDateKey().slice(0, 7);
   const previousMonthDate = getPreviousMonthDateKey();
 
-  await store.service.createMovimiento('user-1', {
+  await store.service.createTransaction('user-1', {
     type: 'expense',
     amount: 25,
     date: `${currentMonth}-05`,
     category: 'Comida',
     note: 'Visible',
   });
-  await store.service.createMovimiento('user-1', {
+  await store.service.createTransaction('user-1', {
     type: 'expense',
     amount: 30,
     date: previousMonthDate,
     category: 'Transporte',
     note: 'Old month',
   });
-  await store.service.createMovimiento('user-2', {
+  await store.service.createTransaction('user-2', {
     type: 'expense',
     amount: 40,
     date: `${currentMonth}-10`,
@@ -135,12 +142,12 @@ test('GET /api/movimientos filters the list by authenticated user and requested 
     service: store.service,
   });
 
-  const response = await app.request(`/api/movimientos?month=${currentMonth}`, {
+  const response = await app.request(`/api/transactions?month=${currentMonth}`, {
     headers: { 'x-user-id': 'user-1' },
   });
 
   assert.equal(response.status, 200);
-  const payload = movimientoListResponseSchema.parse(await response.json());
+  const payload = transactionListResponseSchema.parse(await response.json());
 
   assert.equal(payload.month, currentMonth);
   assert.equal(payload.items.length, 1);
@@ -148,10 +155,10 @@ test('GET /api/movimientos filters the list by authenticated user and requested 
   assert.equal(payload.items[0]?.date, `${currentMonth}-05`);
 });
 
-test('PATCH /api/movimientos/:id returns 200 with the updated payload shape', async () => {
+test('PATCH /api/transactions/:id returns 200 with the updated payload shape', async () => {
   const store = createInMemoryStore();
   const today = getTodayDateKey();
-  const created = await store.service.createMovimiento('user-1', {
+  const created = await store.service.createTransaction('user-1', {
     type: 'expense',
     amount: 60,
     date: today,
@@ -164,7 +171,7 @@ test('PATCH /api/movimientos/:id returns 200 with the updated payload shape', as
     service: store.service,
   });
 
-  const response = await app.request(`/api/movimientos/${created.id}`, {
+  const response = await app.request(`/api/transactions/${created.id}`, {
     method: 'PATCH',
     headers: {
       'content-type': 'application/json',
@@ -180,7 +187,7 @@ test('PATCH /api/movimientos/:id returns 200 with the updated payload shape', as
   });
 
   assert.equal(response.status, 200);
-  const payload = movimientoMutationResponseSchema.parse(await response.json());
+  const payload = transactionMutationResponseSchema.parse(await response.json());
 
   assert.equal(payload.item.id, created.id);
   assert.equal(payload.item.amount, 75.5);
@@ -188,10 +195,10 @@ test('PATCH /api/movimientos/:id returns 200 with the updated payload shape', as
   assert.equal(payload.item.note, 'Después');
 });
 
-test('DELETE /api/movimientos removes the item from a follow-up month list', async () => {
+test('DELETE /api/transactions removes the item from a follow-up month list', async () => {
   const store = createInMemoryStore();
   const currentMonth = getTodayDateKey().slice(0, 7);
-  const created = await store.service.createMovimiento('user-1', {
+  const created = await store.service.createTransaction('user-1', {
     type: 'expense',
     amount: 88,
     date: `${currentMonth}-12`,
@@ -204,47 +211,47 @@ test('DELETE /api/movimientos removes the item from a follow-up month list', asy
     service: store.service,
   });
 
-  const deleteResponse = await app.request(`/api/movimientos/${created.id}`, {
+  const deleteResponse = await app.request(`/api/transactions/${created.id}`, {
     method: 'DELETE',
     headers: { 'x-user-id': 'user-1' },
   });
-  const listResponse = await app.request(`/api/movimientos?month=${currentMonth}`, {
+  const listResponse = await app.request(`/api/transactions?month=${currentMonth}`, {
     headers: { 'x-user-id': 'user-1' },
   });
 
   assert.equal(deleteResponse.status, 200);
-  assert.deepEqual(movimientoDeleteResponseSchema.parse(await deleteResponse.json()), {
+  assert.deepEqual(transactionDeleteResponseSchema.parse(await deleteResponse.json()), {
     success: true,
   });
   assert.equal(listResponse.status, 200);
-  const listPayload = movimientoListResponseSchema.parse(await listResponse.json());
+  const listPayload = transactionListResponseSchema.parse(await listResponse.json());
 
   assert.equal(listPayload.items.length, 0);
 });
 
-test('DELETE /api/movimientos/:id returns 404 for missing or foreign-owner deletes', async (t) => {
-  for (const movimientoId of [
+test('DELETE /api/transactions/:id returns 404 for missing or foreign-owner deletes', async (t) => {
+  for (const transactionId of [
     '11111111-1111-4111-8111-111111111111',
     '22222222-2222-4222-8222-222222222222',
   ]) {
-    await t.test(`returns 404 for ${movimientoId}`, async () => {
+    await t.test(`returns 404 for ${transactionId}`, async () => {
       const app = createTestApp({
         authSessionResolver: async ({ headers }) =>
           createSession(headers.get('x-user-id') ?? 'user-1'),
         service: {
-          deleteMovimiento: async () => {
-            throw new MovimientoServiceError('Movimiento no encontrado', 404);
+          deleteTransaction: async () => {
+            throw new TransactionServiceError('Transacción no encontrada', 404);
           },
         },
       });
 
-      const response = await app.request(`/api/movimientos/${movimientoId}`, {
+      const response = await app.request(`/api/transactions/${transactionId}`, {
         method: 'DELETE',
         headers: { 'x-user-id': 'user-1' },
       });
 
       assert.equal(response.status, 404);
-      assert.deepEqual(await response.json(), { message: 'Movimiento no encontrado' });
+      assert.deepEqual(await response.json(), { message: 'Transacción no encontrada' });
     });
   }
 });
@@ -260,7 +267,7 @@ function createTestApp(options: {
 
   app.route(
     '/',
-    createMovimientosRoutes({
+    createTransactionsRoutes({
       authMiddleware: createAuthMiddleware({
         api: {
           getSession: options.authSessionResolver,
@@ -277,10 +284,10 @@ function createTestApp(options: {
 }
 
 function createInMemoryStore() {
-  const records: InMemoryMovimientoRecord[] = [];
+  const records: InMemoryTransactionRecord[] = [];
 
   const service: RouteService = {
-    async listMovimientos(userId, query) {
+    async listTransactions(userId, query) {
       const month = query.month ?? getTodayDateKey().slice(0, 7);
 
       return {
@@ -291,11 +298,11 @@ function createInMemoryStore() {
           .sort((left, right) => right.date.localeCompare(left.date)),
       };
     },
-    async createMovimiento(userId, input) {
-      const payload = input as MovimientoCreateInput;
-      const id = createMovimientoId(records.length + 1);
+    async createTransaction(userId, input) {
+      const payload = input as TransactionCreateInput;
+      const id = createTransactionId(records.length + 1);
       const timestamp = new Date('2026-04-07T12:00:00.000Z').toISOString();
-      const item: Movimiento = {
+      const item: Transaction = {
         id,
         type: payload.type,
         amount: payload.amount,
@@ -309,11 +316,11 @@ function createInMemoryStore() {
       records.push({ userId, item });
       return item;
     },
-    async updateMovimiento(userId, movimientoId, input) {
-      const payload = input as MovimientoUpdateInput;
+    async updateTransaction(userId, transactionId, input) {
+      const payload = input as TransactionUpdateInput;
       const record = records.find(
         (currentRecord) =>
-          currentRecord.userId === userId && currentRecord.item.id === movimientoId,
+          currentRecord.userId === userId && currentRecord.item.id === transactionId,
       );
 
       if (!record) {
@@ -330,21 +337,21 @@ function createInMemoryStore() {
 
       return item;
     },
-    async getMovimiento(userId, movimientoId) {
+    async getTransaction(userId, transactionId) {
       const record = records.find(
         (currentRecord) =>
-          currentRecord.userId === userId && currentRecord.item.id === movimientoId,
+          currentRecord.userId === userId && currentRecord.item.id === transactionId,
       );
 
       if (!record) {
-        throw new Error('Movimiento no encontrado');
+        throw new Error('Transacción no encontrada');
       }
 
       return record.item;
     },
-    async deleteMovimiento(userId, movimientoId) {
+    async deleteTransaction(userId, transactionId) {
       const index = records.findIndex(
-        (record) => record.userId === userId && record.item.id === movimientoId,
+        (record) => record.userId === userId && record.item.id === transactionId,
       );
 
       if (index >= 0) {
@@ -397,6 +404,6 @@ function getPreviousMonthDateKey() {
   return `${year}-${month}-15`;
 }
 
-function createMovimientoId(seed: number) {
+function createTransactionId(seed: number) {
   return `00000000-0000-4000-8000-${String(seed).padStart(12, '0')}`;
 }

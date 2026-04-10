@@ -9,7 +9,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { user } from './auth.js';
 
-export const movimientos = pgTable(
+export const transactions = pgTable(
   'movimientos',
   {
     id: uuid('id').defaultRandom().primaryKey(),

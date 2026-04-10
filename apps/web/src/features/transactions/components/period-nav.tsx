@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/shared/components/ui/dropdown-menu';
-import { MOVIMIENTOS } from '../strings';
+import { TRANSACTIONS } from '../strings';
 import { formatCurrency, getMonthLabel } from '../utils';
 
 interface PeriodNavProps {
@@ -29,7 +29,7 @@ export function PeriodNav({
   const currentIndex = month ? availableMonths.indexOf(month) : -1;
   const hasPrev = currentIndex >= 0 && currentIndex < availableMonths.length - 1;
   const hasNext = currentIndex > 0;
-  const periodLabel = month ? getMonthLabel(month) : MOVIMIENTOS.allTimeTitle;
+  const periodLabel = month ? getMonthLabel(month) : TRANSACTIONS.allTimeTitle;
 
   function handlePrev() {
     if (hasPrev) {
@@ -52,7 +52,7 @@ export function PeriodNav({
           className="size-9 rounded-lg"
           onClick={handlePrev}
           disabled={!hasPrev}
-          aria-label={MOVIMIENTOS.nav.prev}
+          aria-label={TRANSACTIONS.nav.prev}
         >
           <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
         </Button>
@@ -71,7 +71,7 @@ export function PeriodNav({
               className={!month ? 'font-medium' : ''}
               onClick={() => onMonthChange(undefined)}
             >
-              {MOVIMIENTOS.allTimeTitle}
+              {TRANSACTIONS.allTimeTitle}
             </DropdownMenuItem>
             {availableMonths.length > 0 ? <DropdownMenuSeparator /> : null}
             {availableMonths.map((m) => (
@@ -92,7 +92,7 @@ export function PeriodNav({
           className="size-9 rounded-lg"
           onClick={handleNext}
           disabled={!hasNext}
-          aria-label={MOVIMIENTOS.nav.next}
+          aria-label={TRANSACTIONS.nav.next}
         >
           <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
         </Button>
@@ -104,7 +104,7 @@ export function PeriodNav({
           <span className="text-muted-foreground/40">|</span>
           <span>
             <span className="font-semibold tabular-nums">{count}</span>{' '}
-            <span className="text-muted-foreground">{MOVIMIENTOS.nav.movLabel}</span>
+            <span className="text-muted-foreground">{TRANSACTIONS.nav.movLabel}</span>
           </span>
         </div>
       </div>

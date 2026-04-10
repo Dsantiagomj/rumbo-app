@@ -32,7 +32,7 @@ interface SiteHeaderProps {
  * Desktop layout (left → center → right):
  *   - Left:   SidebarTrigger + Breadcrumb
  *   - Center: Optional search slot (visible per-page via ShellContext)
- *   - Right:  "Agregar movimiento" CTA (shortcut in tooltip) + AI Assistant toggle
+ *   - Right:  "Agregar transaction" CTA (shortcut in tooltip) + AI Assistant toggle
  *
  * Mobile layout (Gmail-style search-bar header):
  *   - A rounded search-bar container spanning most of the header:
@@ -43,7 +43,7 @@ interface SiteHeaderProps {
  *
  * Follows the Rumbo reference project's DesktopHeader exactly.
  */
-export function SiteHeader({ userName: _userName }: SiteHeaderProps) {
+export function SiteHeader(_props: SiteHeaderProps) {
   const { setMobileDrawerOpen } = useSidebarState();
   const { assistantOpen, modKey, toggleAssistant, setMobileAssistantOpen } = useShell();
   const navigate = useNavigate();

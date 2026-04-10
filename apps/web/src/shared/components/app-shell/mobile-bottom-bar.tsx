@@ -34,7 +34,7 @@ export function MobileBottomBar() {
           <BottomBarTab key={item.href} item={item} active={isNavActive(pathname, item.href)} />
         ))}
 
-        {/* Centered protruding CTA: Agregar movimiento */}
+        {/* Centered protruding CTA: Agregar transaction */}
         <CenterCreateAction />
 
         {/* Right tabs: Presupuestos, Reportes */}
@@ -52,7 +52,7 @@ export function MobileBottomBar() {
  * Uses a negative top offset (`-translate-y-3`) so the button breaks out
  * of the bar surface while remaining structurally part of it.
  * The bg-primary circle matches the app's primary CTA color for consistency
- * with the desktop "Agregar movimiento" button.
+ * with the desktop "Agregar transaction" button.
  */
 function CenterCreateAction() {
   return (

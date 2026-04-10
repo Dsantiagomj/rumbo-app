@@ -1,12 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { EditMovimientoPage } from '@/features/movimientos/components/edit-movimiento-page';
+import { EditTransactionPage } from '@/features/transactions/components/edit-transaction-page';
 
 export const Route = createFileRoute('/_app/transactions/$id')({
-  component: EditTransactionPage,
+  component: EditTransactionRoute,
 });
 
-function EditTransactionPage() {
+function EditTransactionRoute() {
   const { id } = Route.useParams();
 
-  return <EditMovimientoPage id={id} />;
+  return <EditTransactionPage id={id} />;
 }

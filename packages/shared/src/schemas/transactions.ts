@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const MOVIMIENTO_TYPES = ['income', 'expense'] as const;
+export const TRANSACTION_TYPES = ['income', 'expense'] as const;
 
 export const INCOME_CATEGORIES = [
   'Salario',
@@ -30,10 +30,10 @@ export const EXPENSE_CATEGORIES = [
   'Otros gastos',
 ] as const;
 
-export const movimientoTypeSchema = z.enum(MOVIMIENTO_TYPES);
+export const transactionTypeSchema = z.enum(TRANSACTION_TYPES);
 export const incomeCategorySchema = z.enum(INCOME_CATEGORIES);
 export const expenseCategorySchema = z.enum(EXPENSE_CATEGORIES);
-export const movimientoCategorySchema = z.union([incomeCategorySchema, expenseCategorySchema]);
+export const transactionCategorySchema = z.union([incomeCategorySchema, expenseCategorySchema]);
 
 export const monthKeySchema = z
   .string()
@@ -46,30 +46,30 @@ export const monthKeySchema = z
     return Number.isInteger(year) && Number.isInteger(month) && month >= 1 && month <= 12;
   }, 'El mes no es válido');
 
-export const movimientoDateSchema = z
+export const transactionDateSchema = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/, 'La fecha debe tener formato AAAA-MM-DD')
   .refine((value) => isValidCalendarDate(value), 'La fecha no es válida')
   .refine((value) => value <= getTodayDateKey(), 'La fecha no puede ser futura');
 
-export const movimientoAmountSchema = z
+export const transactionAmountSchema = z
   .number({ message: 'El monto es requerido' })
   .positive('El monto debe ser mayor a 0');
 
-const movimientoBaseSchema = z.object({
-  type: movimientoTypeSchema,
-  amount: movimientoAmountSchema,
-  date: movimientoDateSchema,
-  category: movimientoCategorySchema,
+const transactionBaseSchema = z.object({
+  type: transactionTypeSchema,
+  amount: transactionAmountSchema,
+  date: transactionDateSchema,
+  category: transactionCategorySchema,
   note: z.string().trim().max(280, 'La nota no puede superar los 280 caracteres').optional(),
 });
 
-export const movimientoCreateSchema = movimientoBaseSchema.superRefine((value, ctx) => {
+export const transactionCreateSchema = transactionBaseSchema.superRefine((value, ctx) => {
   if (value.type === 'income' && !INCOME_CATEGORIES.includes(value.category as IncomeCategory)) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ['category'],
-      message: 'La categoría no corresponde al tipo de movimiento',
+      message: 'La categoría no corresponde al tipo de transaction',
     });
   }
 
@@ -77,64 +77,64 @@ export const movimientoCreateSchema = movimientoBaseSchema.superRefine((value, c
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ['category'],
-      message: 'La categoría no corresponde al tipo de movimiento',
+      message: 'La categoría no corresponde al tipo de transaction',
     });
   }
 });
 
-export const movimientoUpdateSchema = movimientoCreateSchema;
+export const transactionUpdateSchema = transactionCreateSchema;
 
-export const movimientoListQuerySchema = z.object({
+export const transactionListQuerySchema = z.object({
   month: z.union([monthKeySchema, z.literal('all')]).optional(),
   q: z.string().trim().max(120).optional(),
 });
 
-export const movimientoIdParamsSchema = z.object({
+export const transactionIdParamsSchema = z.object({
   id: z.string().uuid('El identificador no es válido'),
 });
 
-export const movimientoSchema = z.object({
+export const transactionSchema = z.object({
   id: z.string().uuid(),
-  type: movimientoTypeSchema,
+  type: transactionTypeSchema,
   amount: z.number().positive(),
-  date: movimientoDateSchema,
-  category: movimientoCategorySchema,
+  date: transactionDateSchema,
+  category: transactionCategorySchema,
   note: z.string().nullable(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
 });
 
-export const movimientoListResponseSchema = z.object({
+export const transactionListResponseSchema = z.object({
   month: monthKeySchema.optional(),
-  items: z.array(movimientoSchema),
+  items: z.array(transactionSchema),
 });
 
-export const movimientoMutationResponseSchema = z.object({
-  item: movimientoSchema,
+export const transactionMutationResponseSchema = z.object({
+  item: transactionSchema,
 });
 
-export const movimientoDeleteResponseSchema = z.object({
+export const transactionDeleteResponseSchema = z.object({
   success: z.literal(true),
 });
 
-export const movimientoAvailableMonthsResponseSchema = z.object({
+export const transactionAvailableMonthsResponseSchema = z.object({
   months: z.array(monthKeySchema),
 });
 
-export type MovimientoType = z.infer<typeof movimientoTypeSchema>;
+export type TransactionType = z.infer<typeof transactionTypeSchema>;
 export type IncomeCategory = z.infer<typeof incomeCategorySchema>;
 export type ExpenseCategory = z.infer<typeof expenseCategorySchema>;
-export type MovimientoCategory = z.infer<typeof movimientoCategorySchema>;
-export type MovimientoCreateInput = z.infer<typeof movimientoCreateSchema>;
-export type MovimientoUpdateInput = z.infer<typeof movimientoUpdateSchema>;
-export type MovimientoListQuery = z.infer<typeof movimientoListQuerySchema>;
-export type MovimientoIdParams = z.infer<typeof movimientoIdParamsSchema>;
-export type Movimiento = z.infer<typeof movimientoSchema>;
-export type MovimientoListResponse = z.infer<typeof movimientoListResponseSchema>;
-export type MovimientoMutationResponse = z.infer<typeof movimientoMutationResponseSchema>;
-export type MovimientoDeleteResponse = z.infer<typeof movimientoDeleteResponseSchema>;
-export type MovimientoAvailableMonthsResponse = z.infer<
-  typeof movimientoAvailableMonthsResponseSchema
+export type TransactionCategory = z.infer<typeof transactionCategorySchema>;
+export type TransactionCreateInput = z.infer<typeof transactionCreateSchema>;
+export type TransactionUpdateInput = z.infer<typeof transactionUpdateSchema>;
+export type TransactionListQuery = z.infer<typeof transactionListQuerySchema>;
+export type TransactionIdParams = z.infer<typeof transactionIdParamsSchema>;
+export type Transaction = z.infer<typeof transactionSchema>;
+export type TransactionListResponse = z.infer<typeof transactionListResponseSchema>;
+export type TransactionMutationResponse = z.infer<typeof transactionMutationResponseSchema>;
+export type TransactionDeleteResponse = z.infer<typeof transactionDeleteResponseSchema>;
+export type TransactionAvailableMonthsResponse = z.infer<
+  typeof transactionAvailableMonthsResponseSchema
 >;
 
 function getTodayDateKey() {

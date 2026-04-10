@@ -1,15 +1,15 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import type { movimientos } from '@rumbo/db/schema';
+import type { transactions } from '@rumbo/db/schema';
 import {
-  createMovimientosService,
-  MovimientoServiceError,
-  type MovimientosDb,
-} from './movimientos.js';
+  createTransactionsService,
+  TransactionServiceError,
+  type TransactionsDb,
+} from './transactions.js';
 
-type MovimientoRow = typeof movimientos.$inferSelect;
+type TransactionRow = typeof transactions.$inferSelect;
 
-test('createMovimiento stores a valid movimiento for the authenticated user', async () => {
+test('createTransaction stores a valid transaction for the authenticated user', async () => {
   const userId = 'user-1';
   const date = getTodayDateKey();
   let insertedValues: Record<string, unknown> | undefined;
@@ -23,10 +23,10 @@ test('createMovimiento stores a valid movimiento for the authenticated user', as
         returning: async () => [createRow({ userId, date })],
       };
     },
-  })) as MovimientosDb['insert'];
+  })) as TransactionsDb['insert'];
 
-  const service = createMovimientosService(db);
-  const result = await service.createMovimiento(userId, {
+  const service = createTransactionsService(db);
+  const result = await service.createTransaction(userId, {
     type: 'expense',
     amount: 123.45,
     date,
@@ -42,19 +42,19 @@ test('createMovimiento stores a valid movimiento for the authenticated user', as
   assert.equal(result.note, 'Supermercado');
 });
 
-test('createMovimiento rejects a future date before touching the database', async () => {
+test('createTransaction rejects a future date before touching the database', async () => {
   const db = createMockDb();
   let insertCalled = false;
 
   db.insert = ((table) => {
     insertCalled = true;
     throw new Error(`Unexpected insert for ${String(table)}`);
-  }) as MovimientosDb['insert'];
+  }) as TransactionsDb['insert'];
 
-  const service = createMovimientosService(db);
+  const service = createTransactionsService(db);
 
   await assert.rejects(
-    service.createMovimiento('user-1', {
+    service.createTransaction('user-1', {
       type: 'expense',
       amount: 10,
       date: getFutureDateKey(),
@@ -70,9 +70,9 @@ test('createMovimiento rejects a future date before touching the database', asyn
   assert.equal(insertCalled, false);
 });
 
-test('updateMovimiento allows updating a movimiento owned by the user', async () => {
+test('updateTransaction allows updating a transaction owned by the user', async () => {
   const userId = 'user-1';
-  const movimientoId = '11111111-1111-4111-8111-111111111111';
+  const transactionId = '11111111-1111-4111-8111-111111111111';
   let updatedValues: Record<string, unknown> | undefined;
 
   const db = createMockDb();
@@ -83,15 +83,15 @@ test('updateMovimiento allows updating a movimiento owned by the user', async ()
       return {
         where: () => ({
           returning: async () => [
-            createRow({ id: movimientoId, userId, category: 'Servicios', note: 'Pago luz' }),
+            createRow({ id: transactionId, userId, category: 'Servicios', note: 'Pago luz' }),
           ],
         }),
       };
     },
-  })) as unknown as MovimientosDb['update'];
+  })) as unknown as TransactionsDb['update'];
 
-  const service = createMovimientosService(db);
-  const result = await service.updateMovimiento(userId, movimientoId, {
+  const service = createTransactionsService(db);
+  const result = await service.updateTransaction(userId, transactionId, {
     type: 'expense',
     amount: 55.2,
     date: getTodayDateKey(),
@@ -102,24 +102,24 @@ test('updateMovimiento allows updating a movimiento owned by the user', async ()
   assert.equal(updatedValues?.amount, '55.20');
   assert.equal(updatedValues?.note, 'Pago luz');
   assert.ok(updatedValues?.updatedAt instanceof Date);
-  assert.equal(result.id, movimientoId);
+  assert.equal(result.id, transactionId);
   assert.equal(result.category, 'Servicios');
   assert.equal(result.note, 'Pago luz');
 });
 
-test('updateMovimiento rejects invalid updates and preserves the stored record', async () => {
+test('updateTransaction rejects invalid updates and preserves the stored record', async () => {
   const db = createMockDb();
   let updateCalled = false;
 
   db.update = ((_table: unknown) => {
     updateCalled = true;
     throw new Error('Unexpected update');
-  }) as MovimientosDb['update'];
+  }) as TransactionsDb['update'];
 
-  const service = createMovimientosService(db);
+  const service = createTransactionsService(db);
 
   await assert.rejects(
-    service.updateMovimiento('user-1', '11111111-1111-4111-8111-111111111111', {
+    service.updateTransaction('user-1', '11111111-1111-4111-8111-111111111111', {
       type: 'expense',
       amount: 0,
       date: getTodayDateKey(),
@@ -135,7 +135,7 @@ test('updateMovimiento rejects invalid updates and preserves the stored record',
   assert.equal(updateCalled, false);
 });
 
-test('deleteMovimiento removes a movimiento owned by the user', async () => {
+test('deleteTransaction removes a transaction owned by the user', async () => {
   let deletedWhereCalled = false;
   const db = createMockDb();
 
@@ -147,37 +147,37 @@ test('deleteMovimiento removes a movimiento owned by the user', async () => {
         returning: async () => [{ id: '11111111-1111-4111-8111-111111111111' }],
       };
     },
-  })) as unknown as MovimientosDb['delete'];
+  })) as unknown as TransactionsDb['delete'];
 
-  const service = createMovimientosService(db);
-  await service.deleteMovimiento('user-1', '11111111-1111-4111-8111-111111111111');
+  const service = createTransactionsService(db);
+  await service.deleteTransaction('user-1', '11111111-1111-4111-8111-111111111111');
 
   assert.equal(deletedWhereCalled, true);
 });
 
-test('deleteMovimiento rejects deleting a missing or foreign movimiento', async () => {
+test('deleteTransaction rejects deleting a missing or foreign transaction', async () => {
   const db = createMockDb();
 
   db.delete = ((_table: unknown) => ({
     where: () => ({
       returning: async () => [],
     }),
-  })) as unknown as MovimientosDb['delete'];
+  })) as unknown as TransactionsDb['delete'];
 
-  const service = createMovimientosService(db);
+  const service = createTransactionsService(db);
 
   await assert.rejects(
-    service.deleteMovimiento('user-1', '11111111-1111-4111-8111-111111111111'),
+    service.deleteTransaction('user-1', '11111111-1111-4111-8111-111111111111'),
     (error) => {
-      assert.equal(error instanceof MovimientoServiceError, true);
-      assert.equal((error as MovimientoServiceError).status, 404);
-      assert.match(String(error), /Movimiento no encontrado/);
+      assert.equal(error instanceof TransactionServiceError, true);
+      assert.equal((error as TransactionServiceError).status, 404);
+      assert.match(String(error), /Transacción no encontrada/);
       return true;
     },
   );
 });
 
-test('listMovimientos returns the current month when no filter is provided', async () => {
+test('listTransactions returns the current month when no filter is provided', async () => {
   const currentMonth = getCurrentMonthKey();
   const db = createMockDb();
 
@@ -187,17 +187,17 @@ test('listMovimientos returns the current month when no filter is provided', asy
         orderBy: async () => [createRow({ date: `${currentMonth}-05` })],
       }),
     }),
-  })) as unknown as MovimientosDb['select'];
+  })) as unknown as TransactionsDb['select'];
 
-  const service = createMovimientosService(db);
-  const result = await service.listMovimientos('user-1', {});
+  const service = createTransactionsService(db);
+  const result = await service.listTransactions('user-1', {});
 
   assert.equal(result.month, currentMonth);
   assert.equal(result.items.length, 1);
   assert.equal(result.items[0]?.date, `${currentMonth}-05`);
 });
 
-test('listMovimientos normalizes string timestamps returned by the DB driver', async () => {
+test('listTransactions normalizes string timestamps returned by the DB driver', async () => {
   const db = createMockDb();
 
   db.select = (() => ({
@@ -211,33 +211,33 @@ test('listMovimientos normalizes string timestamps returned by the DB driver', a
         ],
       }),
     }),
-  })) as unknown as MovimientosDb['select'];
+  })) as unknown as TransactionsDb['select'];
 
-  const service = createMovimientosService(db);
-  const result = await service.listMovimientos('user-1', { month: '2026-04' });
+  const service = createTransactionsService(db);
+  const result = await service.listTransactions('user-1', { month: '2026-04' });
 
   assert.equal(result.items[0]?.createdAt, '2026-04-06T12:00:00.000Z');
   assert.equal(result.items[0]?.updatedAt, '2026-04-06T13:00:00.000Z');
 });
 
-function createMockDb(): MovimientosDb {
+function createMockDb(): TransactionsDb {
   return {
     select: (() => {
       throw new Error('select mock not configured');
-    }) as MovimientosDb['select'],
+    }) as TransactionsDb['select'],
     insert: (() => {
       throw new Error('insert mock not configured');
-    }) as MovimientosDb['insert'],
+    }) as TransactionsDb['insert'],
     update: (() => {
       throw new Error('update mock not configured');
-    }) as MovimientosDb['update'],
+    }) as TransactionsDb['update'],
     delete: (() => {
       throw new Error('delete mock not configured');
-    }) as MovimientosDb['delete'],
+    }) as TransactionsDb['delete'],
   };
 }
 
-function createRow(overrides: Partial<MovimientoRow> = {}): MovimientoRow {
+function createRow(overrides: Partial<TransactionRow> = {}): TransactionRow {
   return {
     id: '11111111-1111-4111-8111-111111111111',
     userId: 'user-1',

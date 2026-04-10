@@ -1,22 +1,22 @@
-import { movimientos } from '@rumbo/db/schema';
+import { transactions } from '@rumbo/db/schema';
 import {
-  type Movimiento,
-  type MovimientoListResponse,
-  movimientoCreateSchema,
-  movimientoListQuerySchema,
-  movimientoSchema,
-  movimientoUpdateSchema,
+  type Transaction,
+  type TransactionListResponse,
+  transactionCreateSchema,
+  transactionListQuerySchema,
+  transactionSchema,
+  transactionUpdateSchema,
 } from '@rumbo/shared';
 import { and, desc, eq, gte, lt, sql } from 'drizzle-orm';
-import { MOVIMIENTOS_SERVICE } from './movimientos-strings.js';
+import { TRANSACTIONS_SERVICE } from './transactions-strings.js';
 
-type MovimientoRow = typeof movimientos.$inferSelect;
+type TransactionRow = typeof transactions.$inferSelect;
 type AvailableMonthRow = { month: string };
 
 // HACK: Narrow local DB contract until the shared db package exports the typed client.
 type AvailableMonthsDb = {
   select: (selection: { month: ReturnType<typeof sql<string>> }) => {
-    from: (table: typeof movimientos) => {
+    from: (table: typeof transactions) => {
       where: (condition: unknown) => {
         groupBy: (grouping: ReturnType<typeof sql<string>>) => {
           orderBy: (...clauses: unknown[]) => Promise<AvailableMonthRow[]>;
@@ -27,34 +27,34 @@ type AvailableMonthsDb = {
 };
 
 // HACK: Tests stub only the query methods used by this service, so we keep a minimal contract here.
-export type MovimientosDb = {
+export type TransactionsDb = {
   select: () => {
-    from: (table: typeof movimientos) => {
+    from: (table: typeof transactions) => {
       where: (condition: unknown) => {
-        orderBy: (...clauses: unknown[]) => Promise<MovimientoRow[]>;
+        orderBy: (...clauses: unknown[]) => Promise<TransactionRow[]>;
       };
     };
   };
-  insert: (table: typeof movimientos) => {
-    values: (values: typeof movimientos.$inferInsert) => {
-      returning: () => Promise<MovimientoRow[]>;
+  insert: (table: typeof transactions) => {
+    values: (values: typeof transactions.$inferInsert) => {
+      returning: () => Promise<TransactionRow[]>;
     };
   };
-  update: (table: typeof movimientos) => {
-    set: (values: Partial<typeof movimientos.$inferInsert> & { updatedAt: Date }) => {
+  update: (table: typeof transactions) => {
+    set: (values: Partial<typeof transactions.$inferInsert> & { updatedAt: Date }) => {
       where: (condition: unknown) => {
-        returning: () => Promise<MovimientoRow[]>;
+        returning: () => Promise<TransactionRow[]>;
       };
     };
   };
-  delete: (table: typeof movimientos) => {
+  delete: (table: typeof transactions) => {
     where: (condition: unknown) => {
-      returning: (selection: { id: typeof movimientos.id }) => Promise<Array<{ id: string }>>;
+      returning: (selection: { id: typeof transactions.id }) => Promise<Array<{ id: string }>>;
     };
   };
 };
 
-export class MovimientoServiceError extends Error {
+export class TransactionServiceError extends Error {
   constructor(
     message: string,
     public readonly status: number,
@@ -63,22 +63,22 @@ export class MovimientoServiceError extends Error {
   }
 }
 
-export function createMovimientosService(database: MovimientosDb) {
+export function createTransactionsService(database: TransactionsDb) {
   return {
-    async listMovimientos(
+    async listTransactions(
       userId: string,
       query: { month?: string },
-    ): Promise<MovimientoListResponse> {
-      const { month } = movimientoListQuerySchema.parse(query);
+    ): Promise<TransactionListResponse> {
+      const { month } = transactionListQuerySchema.parse(query);
 
       if (month === 'all') {
         const rows = await database
           .select()
-          .from(movimientos)
-          .where(eq(movimientos.userId, userId))
-          .orderBy(desc(movimientos.date), desc(movimientos.time));
+          .from(transactions)
+          .where(eq(transactions.userId, userId))
+          .orderBy(desc(transactions.date), desc(transactions.time));
 
-        return { items: rows.map(mapMovimientoRecord) };
+        return { items: rows.map(mapTransactionRecord) };
       }
 
       const targetMonth = month ?? getCurrentMonthKey();
@@ -86,24 +86,24 @@ export function createMovimientosService(database: MovimientosDb) {
 
       const rows = await database
         .select()
-        .from(movimientos)
+        .from(transactions)
         .where(
           and(
-            eq(movimientos.userId, userId),
-            gte(movimientos.date, startDate),
-            lt(movimientos.date, endDate),
+            eq(transactions.userId, userId),
+            gte(transactions.date, startDate),
+            lt(transactions.date, endDate),
           ),
         )
-        .orderBy(desc(movimientos.date), desc(movimientos.time));
+        .orderBy(desc(transactions.date), desc(transactions.time));
 
-      return { month: targetMonth, items: rows.map(mapMovimientoRecord) };
+      return { month: targetMonth, items: rows.map(mapTransactionRecord) };
     },
 
-    async createMovimiento(userId: string, input: unknown): Promise<Movimiento> {
-      const parsedInput = movimientoCreateSchema.parse(input);
+    async createTransaction(userId: string, input: unknown): Promise<Transaction> {
+      const parsedInput = transactionCreateSchema.parse(input);
 
       const [created] = await database
-        .insert(movimientos)
+        .insert(transactions)
         .values({
           userId,
           type: parsedInput.type,
@@ -116,21 +116,21 @@ export function createMovimientosService(database: MovimientosDb) {
         .returning();
 
       if (!created) {
-        throw new MovimientoServiceError(MOVIMIENTOS_SERVICE.createFailed, 500);
+        throw new TransactionServiceError(TRANSACTIONS_SERVICE.createFailed, 500);
       }
 
-      return mapMovimientoRecord(created);
+      return mapTransactionRecord(created);
     },
 
-    async updateMovimiento(
+    async updateTransaction(
       userId: string,
-      movimientoId: string,
+      transactionId: string,
       input: unknown,
-    ): Promise<Movimiento> {
-      const parsedInput = movimientoUpdateSchema.parse(input);
+    ): Promise<Transaction> {
+      const parsedInput = transactionUpdateSchema.parse(input);
 
       const [updated] = await database
-        .update(movimientos)
+        .update(transactions)
         .set({
           type: parsedInput.type,
           amount: parsedInput.amount.toFixed(2),
@@ -140,89 +140,89 @@ export function createMovimientosService(database: MovimientosDb) {
           note: normalizeOptionalText(parsedInput.note),
           updatedAt: new Date(),
         })
-        .where(and(eq(movimientos.id, movimientoId), eq(movimientos.userId, userId)))
+        .where(and(eq(transactions.id, transactionId), eq(transactions.userId, userId)))
         .returning();
 
       if (!updated) {
-        throw new MovimientoServiceError(MOVIMIENTOS_SERVICE.notFound, 404);
+        throw new TransactionServiceError(TRANSACTIONS_SERVICE.notFound, 404);
       }
 
-      return mapMovimientoRecord(updated);
+      return mapTransactionRecord(updated);
     },
 
-    async getMovimiento(userId: string, movimientoId: string): Promise<Movimiento> {
+    async getTransaction(userId: string, transactionId: string): Promise<Transaction> {
       const rows = await database
         .select()
-        .from(movimientos)
-        .where(and(eq(movimientos.id, movimientoId), eq(movimientos.userId, userId)))
-        .orderBy(desc(movimientos.createdAt));
+        .from(transactions)
+        .where(and(eq(transactions.id, transactionId), eq(transactions.userId, userId)))
+        .orderBy(desc(transactions.createdAt));
 
       const row = rows[0];
 
       if (!row) {
-        throw new MovimientoServiceError(MOVIMIENTOS_SERVICE.notFound, 404);
+        throw new TransactionServiceError(TRANSACTIONS_SERVICE.notFound, 404);
       }
 
-      return mapMovimientoRecord(row);
+      return mapTransactionRecord(row);
     },
 
-    async deleteMovimiento(userId: string, movimientoId: string): Promise<void> {
+    async deleteTransaction(userId: string, transactionId: string): Promise<void> {
       const [deleted] = await database
-        .delete(movimientos)
-        .where(and(eq(movimientos.id, movimientoId), eq(movimientos.userId, userId)))
-        .returning({ id: movimientos.id });
+        .delete(transactions)
+        .where(and(eq(transactions.id, transactionId), eq(transactions.userId, userId)))
+        .returning({ id: transactions.id });
 
       if (!deleted) {
-        throw new MovimientoServiceError(MOVIMIENTOS_SERVICE.notFound, 404);
+        throw new TransactionServiceError(TRANSACTIONS_SERVICE.notFound, 404);
       }
     },
   };
 }
 
-export async function listMovimientos(userId: string, query: { month?: string }) {
-  const service = createMovimientosService(await getMovimientosDb());
-  return service.listMovimientos(userId, query);
+export async function listTransactions(userId: string, query: { month?: string }) {
+  const service = createTransactionsService(await getTransactionsDb());
+  return service.listTransactions(userId, query);
 }
 
-export async function getMovimiento(userId: string, movimientoId: string) {
-  const service = createMovimientosService(await getMovimientosDb());
-  return service.getMovimiento(userId, movimientoId);
+export async function getTransaction(userId: string, transactionId: string) {
+  const service = createTransactionsService(await getTransactionsDb());
+  return service.getTransaction(userId, transactionId);
 }
 
 export async function listAvailableMonths(userId: string): Promise<string[]> {
-  const monthExpr = sql<string>`to_char(${movimientos.date}, 'YYYY-MM')`;
+  const monthExpr = sql<string>`to_char(${transactions.date}, 'YYYY-MM')`;
   const monthsDb = await getAvailableMonthsDb();
 
   const rows = await monthsDb
     .select({ month: monthExpr })
-    .from(movimientos)
-    .where(eq(movimientos.userId, userId))
+    .from(transactions)
+    .where(eq(transactions.userId, userId))
     .groupBy(monthExpr)
     .orderBy(desc(monthExpr));
 
   return rows.map((row) => row.month);
 }
 
-export async function createMovimiento(userId: string, input: unknown) {
-  const service = createMovimientosService(await getMovimientosDb());
-  return service.createMovimiento(userId, input);
+export async function createTransaction(userId: string, input: unknown) {
+  const service = createTransactionsService(await getTransactionsDb());
+  return service.createTransaction(userId, input);
 }
 
-export async function updateMovimiento(userId: string, movimientoId: string, input: unknown) {
-  const service = createMovimientosService(await getMovimientosDb());
-  return service.updateMovimiento(userId, movimientoId, input);
+export async function updateTransaction(userId: string, transactionId: string, input: unknown) {
+  const service = createTransactionsService(await getTransactionsDb());
+  return service.updateTransaction(userId, transactionId, input);
 }
 
-export async function deleteMovimiento(userId: string, movimientoId: string) {
-  const service = createMovimientosService(await getMovimientosDb());
-  return service.deleteMovimiento(userId, movimientoId);
+export async function deleteTransaction(userId: string, transactionId: string) {
+  const service = createTransactionsService(await getTransactionsDb());
+  return service.deleteTransaction(userId, transactionId);
 }
 
-async function getMovimientosDb(): Promise<MovimientosDb> {
+async function getTransactionsDb(): Promise<TransactionsDb> {
   const { db } = await import('../lib/db.js');
 
   // HACK: Drizzle's inferred DB type is not exported from the shared db layer yet.
-  return db as unknown as MovimientosDb;
+  return db as unknown as TransactionsDb;
 }
 
 async function getAvailableMonthsDb(): Promise<AvailableMonthsDb> {
@@ -232,8 +232,8 @@ async function getAvailableMonthsDb(): Promise<AvailableMonthsDb> {
   return db as unknown as AvailableMonthsDb;
 }
 
-function mapMovimientoRecord(record: MovimientoRow): Movimiento {
-  return movimientoSchema.parse({
+function mapTransactionRecord(record: TransactionRow): Transaction {
+  return transactionSchema.parse({
     id: record.id,
     type: record.type,
     amount: Number(record.amount),
@@ -294,7 +294,7 @@ function toIsoDateTimeString(value: Date | string) {
   const parsed = new Date(value);
 
   if (Number.isNaN(parsed.getTime())) {
-    throw new MovimientoServiceError(MOVIMIENTOS_SERVICE.invalidDate, 500);
+    throw new TransactionServiceError(TRANSACTIONS_SERVICE.invalidDate, 500);
   }
 
   return parsed.toISOString();

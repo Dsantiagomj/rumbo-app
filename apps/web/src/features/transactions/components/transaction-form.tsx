@@ -1,9 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  type MovimientoCreateInput,
-  type MovimientoType,
-  movimientoCreateSchema,
-  movimientoUpdateSchema,
+  type TransactionCreateInput,
+  type TransactionType,
+  transactionCreateSchema,
+  transactionUpdateSchema,
 } from '@rumbo/shared';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/shared/components/ui/button';
@@ -15,8 +15,8 @@ import {
   FieldLabel,
 } from '@/shared/components/ui/field';
 import { Input } from '@/shared/components/ui/input';
-import { MOVIMIENTOS } from '../strings';
-import type { MovimientoFormProps } from '../types';
+import { TRANSACTIONS } from '../strings';
+import type { TransactionFormProps } from '../types';
 import {
   FORM_CONTROL_CLASS_NAME,
   getCategoryOptions,
@@ -25,14 +25,14 @@ import {
   TEXTAREA_CLASS_NAME,
 } from '../utils';
 
-export function MovimientoForm({
+export function TransactionForm({
   mode,
   initialValues,
   onSubmit,
   onCancel,
   submitLabel,
   isPending,
-}: MovimientoFormProps) {
+}: TransactionFormProps) {
   const {
     register,
     watch,
@@ -40,15 +40,15 @@ export function MovimientoForm({
     getValues,
     handleSubmit,
     formState: { errors },
-  } = useForm<MovimientoCreateInput>({
-    resolver: zodResolver(mode === 'create' ? movimientoCreateSchema : movimientoUpdateSchema),
+  } = useForm<TransactionCreateInput>({
+    resolver: zodResolver(mode === 'create' ? transactionCreateSchema : transactionUpdateSchema),
     defaultValues: initialValues,
   });
 
   const selectedType = watch('type');
   const categoryOptions = getCategoryOptions(selectedType);
 
-  function handleTypeChange(nextType: MovimientoType) {
+  function handleTypeChange(nextType: TransactionType) {
     const nextOptions = getCategoryOptions(nextType);
     const currentCategory = getValues('category');
     const fallbackCategory = nextOptions[0];
@@ -64,13 +64,15 @@ export function MovimientoForm({
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       <FieldGroup>
         <Field data-invalid={errors.type ? true : undefined}>
-          <FieldLabel htmlFor={`movimiento-type-${mode}`}>{MOVIMIENTOS.form.typeLabel}</FieldLabel>
+          <FieldLabel htmlFor={`transaction-type-${mode}`}>
+            {TRANSACTIONS.form.typeLabel}
+          </FieldLabel>
           <select
-            id={`movimiento-type-${mode}`}
+            id={`transaction-type-${mode}`}
             className={FORM_CONTROL_CLASS_NAME}
             aria-invalid={!!errors.type}
             value={selectedType}
-            onChange={(event) => handleTypeChange(event.target.value as MovimientoType)}
+            onChange={(event) => handleTypeChange(event.target.value as TransactionType)}
           >
             {(['income', 'expense'] as const).map((type) => (
               <option key={type} value={type}>
@@ -82,11 +84,11 @@ export function MovimientoForm({
         </Field>
 
         <Field data-invalid={errors.amount ? true : undefined}>
-          <FieldLabel htmlFor={`movimiento-amount-${mode}`}>
-            {MOVIMIENTOS.form.amountLabel}
+          <FieldLabel htmlFor={`transaction-amount-${mode}`}>
+            {TRANSACTIONS.form.amountLabel}
           </FieldLabel>
           <Input
-            id={`movimiento-amount-${mode}`}
+            id={`transaction-amount-${mode}`}
             type="number"
             step="0.01"
             min="0.01"
@@ -97,24 +99,26 @@ export function MovimientoForm({
         </Field>
 
         <Field data-invalid={errors.date ? true : undefined}>
-          <FieldLabel htmlFor={`movimiento-date-${mode}`}>{MOVIMIENTOS.form.dateLabel}</FieldLabel>
+          <FieldLabel htmlFor={`transaction-date-${mode}`}>
+            {TRANSACTIONS.form.dateLabel}
+          </FieldLabel>
           <Input
-            id={`movimiento-date-${mode}`}
+            id={`transaction-date-${mode}`}
             type="date"
             max={getTodayDateValue()}
             aria-invalid={!!errors.date}
             {...register('date')}
           />
-          <FieldDescription>{MOVIMIENTOS.form.dateHelp}</FieldDescription>
+          <FieldDescription>{TRANSACTIONS.form.dateHelp}</FieldDescription>
           <FieldError>{errors.date?.message}</FieldError>
         </Field>
 
         <Field data-invalid={errors.category ? true : undefined}>
-          <FieldLabel htmlFor={`movimiento-category-${mode}`}>
-            {MOVIMIENTOS.form.categoryLabel}
+          <FieldLabel htmlFor={`transaction-category-${mode}`}>
+            {TRANSACTIONS.form.categoryLabel}
           </FieldLabel>
           <select
-            id={`movimiento-category-${mode}`}
+            id={`transaction-category-${mode}`}
             className={FORM_CONTROL_CLASS_NAME}
             aria-invalid={!!errors.category}
             {...register('category')}
@@ -129,11 +133,13 @@ export function MovimientoForm({
         </Field>
 
         <Field data-invalid={errors.note ? true : undefined}>
-          <FieldLabel htmlFor={`movimiento-note-${mode}`}>{MOVIMIENTOS.form.noteLabel}</FieldLabel>
+          <FieldLabel htmlFor={`transaction-note-${mode}`}>
+            {TRANSACTIONS.form.noteLabel}
+          </FieldLabel>
           <textarea
-            id={`movimiento-note-${mode}`}
+            id={`transaction-note-${mode}`}
             className={TEXTAREA_CLASS_NAME}
-            placeholder={MOVIMIENTOS.form.notePlaceholder}
+            placeholder={TRANSACTIONS.form.notePlaceholder}
             aria-invalid={!!errors.note}
             {...register('note')}
           />
@@ -144,7 +150,7 @@ export function MovimientoForm({
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         {onCancel ? (
           <Button type="button" variant="outline" onClick={onCancel} disabled={isPending}>
-            {MOVIMIENTOS.form.cancel}
+            {TRANSACTIONS.form.cancel}
           </Button>
         ) : null}
         <Button type="submit" disabled={isPending}>

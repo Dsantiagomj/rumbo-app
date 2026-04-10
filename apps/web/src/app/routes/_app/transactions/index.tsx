@@ -1,10 +1,10 @@
-import { movimientoListQuerySchema } from '@rumbo/shared';
+import { transactionListQuerySchema } from '@rumbo/shared';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { MovimientosPage } from '@/features/movimientos/components/movimientos-page';
-import { getCurrentMonthValue } from '@/features/movimientos/utils';
+import { TransactionsPage } from '@/features/transactions/components/transactions-page';
+import { getCurrentMonthValue } from '@/features/transactions/utils';
 
 export const Route = createFileRoute('/_app/transactions/')({
-  validateSearch: movimientoListQuerySchema,
+  validateSearch: transactionListQuerySchema,
   component: TransactionsIndexPage,
 });
 
@@ -14,7 +14,7 @@ function TransactionsIndexPage() {
   const month = search.month === 'all' ? undefined : (search.month ?? getCurrentMonthValue());
 
   return (
-    <MovimientosPage
+    <TransactionsPage
       month={month}
       query={search.q?.trim() ?? ''}
       onMonthChange={(nextMonth) => {
