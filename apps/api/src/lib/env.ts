@@ -32,7 +32,7 @@ const envSchema = z.object({
   BETTER_AUTH_URL: requiredInProd(z.string().url(), 'http://localhost:3001'),
 
   // --- URLs ---
-  APP_URL: requiredInProd(z.string().url(), 'http://localhost:5173'),
+  APP_URL: requiredInProd(z.string().min(1), 'http://localhost:5173'),
   API_URL: z.string().url().optional(),
 
   // --- Email ---

@@ -1,6 +1,13 @@
-import { Add01Icon, Menu01Icon, Search01Icon, SparklesIcon } from '@hugeicons/core-free-icons';
+import {
+  Add01Icon,
+  Cancel01Icon,
+  Menu01Icon,
+  Search01Icon,
+  SparklesIcon,
+} from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { useRouterState } from '@tanstack/react-router';
+import { Link, useNavigate, useRouterState } from '@tanstack/react-router';
+import type { ChangeEvent } from 'react';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,7 +21,6 @@ import { useShell } from '@/shared/hooks/use-shell-context';
 import { useSidebarState } from '@/shared/hooks/use-sidebar-state';
 import { getPageTitle } from '@/shared/lib/navigation';
 import { SHELL } from '@/shared/lib/strings';
-import { NavLink } from './nav-link';
 
 interface SiteHeaderProps {
   userName: string;
@@ -26,7 +32,7 @@ interface SiteHeaderProps {
  * Desktop layout (left → center → right):
  *   - Left:   SidebarTrigger + Breadcrumb
  *   - Center: Optional search slot (visible per-page via ShellContext)
- *   - Right:  "Agregar movimiento" CTA (shortcut in tooltip) + AI Assistant toggle
+ *   - Right:  "Agregar transaction" CTA (shortcut in tooltip) + AI Assistant toggle
  *
  * Mobile layout (Gmail-style search-bar header):
  *   - A rounded search-bar container spanning most of the header:
@@ -37,13 +43,52 @@ interface SiteHeaderProps {
  *
  * Follows the Rumbo reference project's DesktopHeader exactly.
  */
-export function SiteHeader({ userName: _userName }: SiteHeaderProps) {
+export function SiteHeader(_props: SiteHeaderProps) {
   const { setMobileDrawerOpen } = useSidebarState();
   const { assistantOpen, modKey, toggleAssistant, setMobileAssistantOpen } = useShell();
+  const navigate = useNavigate();
 
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const locationSearch = useRouterState({
+    select: (s) => s.location.search as Record<string, unknown>,
+  });
   const pageTitle = getPageTitle(pathname);
   const searchSlotVisible = shouldShowSearchSlot(pathname);
+  const transactionsSearchVisible = pathname === '/transactions';
+  const transactionSearchQuery =
+    transactionsSearchVisible && typeof locationSearch.q === 'string' ? locationSearch.q : '';
+
+  function handleSearchChange(event: ChangeEvent<HTMLInputElement>) {
+    const nextQuery = event.target.value;
+
+    if (!transactionsSearchVisible) {
+      return;
+    }
+
+    void navigate({
+      to: '/transactions',
+      search: (prev: Record<string, unknown>) => ({
+        month: typeof prev.month === 'string' ? prev.month : undefined,
+        q: nextQuery.trim() ? nextQuery : undefined,
+      }),
+      replace: true,
+    });
+  }
+
+  function clearTransactionsSearch() {
+    if (!transactionsSearchVisible && pathname !== '/transactions/new') {
+      return;
+    }
+
+    void navigate({
+      to: '/transactions',
+      search: (prev: Record<string, unknown>) => ({
+        month: typeof prev.month === 'string' ? prev.month : undefined,
+        q: undefined,
+      }),
+      replace: true,
+    });
+  }
 
   return (
     <header
@@ -66,7 +111,16 @@ export function SiteHeader({ userName: _userName }: SiteHeaderProps) {
 
         {/* Center: search slot — fills remaining space, content is centered */}
         <div className="flex flex-1 items-center justify-center">
-          {searchSlotVisible && <SearchSlotPlaceholder modKey={modKey} />}
+          {searchSlotVisible ? (
+            <SearchSlot
+              modKey={modKey}
+              value={transactionsSearchVisible ? transactionSearchQuery : ''}
+              placeholder={SHELL.transactionSearchPlaceholder}
+              active={transactionsSearchVisible}
+              onChange={handleSearchChange}
+              onClear={clearTransactionsSearch}
+            />
+          ) : null}
         </div>
 
         {/* Right: quick actions + AI assistant */}
@@ -75,10 +129,10 @@ export function SiteHeader({ userName: _userName }: SiteHeaderProps) {
           <Tooltip>
             <TooltipTrigger asChild>
               <Button variant="default" size="sm" asChild>
-                <NavLink href="/transactions/new">
+                <Link to="/transactions/new">
                   <HugeiconsIcon icon={Add01Icon} size={14} data-icon="inline-start" />
                   {SHELL.addTransaction}
-                </NavLink>
+                </Link>
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
@@ -133,7 +187,7 @@ export function SiteHeader({ userName: _userName }: SiteHeaderProps) {
             <HugeiconsIcon icon={Menu01Icon} size={20} />
           </button>
 
-          {/* Brand mark + search placeholder text */}
+          {/* Brand mark + route-aware search input */}
           <div className="flex min-w-0 flex-1 items-center gap-2 px-1">
             <img
               src="/favicon.svg"
@@ -141,9 +195,33 @@ export function SiteHeader({ userName: _userName }: SiteHeaderProps) {
               className="h-5 w-5 shrink-0 rounded"
               aria-hidden="true"
             />
-            <span className="truncate text-sm text-muted-foreground">
-              {SHELL.searchMobilePlaceholder}
-            </span>
+            {transactionsSearchVisible ? (
+              <div className="flex min-w-0 flex-1 items-center gap-1">
+                <input
+                  type="search"
+                  value={transactionSearchQuery}
+                  onChange={handleSearchChange}
+                  placeholder={SHELL.transactionSearchPlaceholder}
+                  data-rumbo-search="transactions"
+                  className="h-8 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                  aria-label={SHELL.transactionSearchPlaceholder}
+                />
+                {transactionSearchQuery ? (
+                  <button
+                    type="button"
+                    onClick={clearTransactionsSearch}
+                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground"
+                    aria-label={SHELL.transactionSearchClearLabel}
+                  >
+                    <HugeiconsIcon icon={Cancel01Icon} size={16} />
+                  </button>
+                ) : null}
+              </div>
+            ) : (
+              <span className="truncate text-sm text-muted-foreground">
+                {SHELL.searchMobilePlaceholder}
+              </span>
+            )}
           </div>
 
           {/* Search icon — decorative affordance (right end of the bar) */}
@@ -179,7 +257,21 @@ export function SiteHeader({ userName: _userName }: SiteHeaderProps) {
  *
  * Includes a keyboard shortcut affordance (⌘K / Ctrl+K) aligned right.
  */
-function SearchSlotPlaceholder({ modKey }: { modKey: string }) {
+function SearchSlot({
+  modKey,
+  value,
+  placeholder,
+  active,
+  onChange,
+  onClear,
+}: {
+  modKey: string;
+  value: string;
+  placeholder: string;
+  active: boolean;
+  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  onClear: () => void;
+}) {
   return (
     <div className="flex h-8 w-full max-w-xl items-center gap-2 rounded-lg border border-border/60 bg-muted/50 px-3 text-xs text-muted-foreground">
       <svg
@@ -195,7 +287,31 @@ function SearchSlotPlaceholder({ modKey }: { modKey: string }) {
           clipRule="evenodd"
         />
       </svg>
-      <span className="flex-1">{SHELL.searchPlaceholder}</span>
+      {active ? (
+        <div className="flex min-w-0 flex-1 items-center gap-1">
+          <input
+            type="search"
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+            data-rumbo-search="transactions"
+            className="h-full min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+            aria-label={placeholder}
+          />
+          {value ? (
+            <button
+              type="button"
+              onClick={onClear}
+              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground"
+              aria-label={SHELL.transactionSearchClearLabel}
+            >
+              <HugeiconsIcon icon={Cancel01Icon} size={14} />
+            </button>
+          ) : null}
+        </div>
+      ) : (
+        <span className="flex-1">{SHELL.searchPlaceholder}</span>
+      )}
       <kbd className="pointer-events-none shrink-0 rounded border border-border/80 bg-background/60 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground/70">
         {modKey}K
       </kbd>
