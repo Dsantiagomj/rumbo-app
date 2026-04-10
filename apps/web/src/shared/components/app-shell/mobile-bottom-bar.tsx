@@ -1,10 +1,9 @@
 import { Add01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Link, useRouterState } from '@tanstack/react-router';
+import { useNavigate, useRouterState } from '@tanstack/react-router';
 import { isNavActive, type NavItem, PRIMARY_NAV_ITEMS } from '@/shared/lib/navigation';
 import { SHELL } from '@/shared/lib/strings';
 import { cn } from '@/shared/lib/utils';
-import { NavLink } from './nav-link';
 
 /**
  * Mobile bottom navigation bar with a centered create-action CTA.
@@ -29,15 +28,12 @@ export function MobileBottomBar() {
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
       <div className="relative flex items-end justify-around">
-        {/* Left tabs: Inicio, Transacciones */}
         {leftTabs.map((item) => (
           <BottomBarTab key={item.href} item={item} active={isNavActive(pathname, item.href)} />
         ))}
 
-        {/* Centered protruding CTA: Agregar transaction */}
         <CenterCreateAction />
 
-        {/* Right tabs: Presupuestos, Reportes */}
         {rightTabs.map((item) => (
           <BottomBarTab key={item.href} item={item} active={isNavActive(pathname, item.href)} />
         ))}
@@ -48,17 +44,18 @@ export function MobileBottomBar() {
 
 /**
  * Centered create-action button that protrudes above the bottom bar.
- *
- * Uses a negative top offset (`-translate-y-3`) so the button breaks out
- * of the bar surface while remaining structurally part of it.
- * The bg-primary circle matches the app's primary CTA color for consistency
- * with the desktop "Agregar transaction" button.
  */
 function CenterCreateAction() {
+  const navigate = useNavigate();
+
   return (
     <div className="-translate-y-3 px-2">
-      <Link
-        to="/transactions/new"
+      <a
+        href="/transactions/new"
+        onClick={(e) => {
+          e.preventDefault();
+          void navigate({ to: '/transactions/new' });
+        }}
         className="flex flex-col items-center gap-0.5"
         aria-label={SHELL.addTransaction}
       >
@@ -66,20 +63,29 @@ function CenterCreateAction() {
           <HugeiconsIcon icon={Add01Icon} size={24} />
         </span>
         <span className="text-[10px] font-medium text-muted-foreground">{SHELL.add}</span>
-      </Link>
+      </a>
     </div>
   );
 }
 
 function BottomBarTab({ item, active }: { item: NavItem; active: boolean }) {
-  const useTypedLink = item.href === '/' || item.href === '/transactions';
-  const className = cn(
-    'relative flex flex-1 flex-col items-center gap-0.5 py-2 text-[10px] font-medium transition-colors active:opacity-60',
-    active ? 'text-primary' : 'text-muted-foreground',
-  );
+  const navigate = useNavigate();
 
-  const content = (
-    <>
+  return (
+    <a
+      href={item.href}
+      onClick={(e) => {
+        e.preventDefault();
+        if (!active) {
+          void navigate({ to: item.href as '/' });
+        }
+      }}
+      aria-current={active ? 'page' : undefined}
+      className={cn(
+        'relative flex min-h-[44px] flex-1 flex-col items-center gap-0.5 py-2 text-[10px] font-medium transition-colors active:opacity-60',
+        active ? 'text-primary' : 'text-muted-foreground',
+      )}
+    >
       <div
         className={cn(
           'flex h-7 w-14 items-center justify-center rounded-full transition-colors',
@@ -89,24 +95,6 @@ function BottomBarTab({ item, active }: { item: NavItem; active: boolean }) {
         <HugeiconsIcon icon={item.icon} size={20} className={cn(active && 'text-primary')} />
       </div>
       <span>{item.label}</span>
-    </>
-  );
-
-  if (useTypedLink) {
-    return (
-      <Link
-        to={item.href as '/' | '/transactions'}
-        aria-current={active ? 'page' : undefined}
-        className={className}
-      >
-        {content}
-      </Link>
-    );
-  }
-
-  return (
-    <NavLink href={item.href} aria-current={active ? 'page' : undefined} className={className}>
-      {content}
-    </NavLink>
+    </a>
   );
 }

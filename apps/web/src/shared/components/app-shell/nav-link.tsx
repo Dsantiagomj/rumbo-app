@@ -21,13 +21,13 @@ export const NavLink = forwardRef<HTMLAnchorElement, NavLinkProps>(function NavL
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   function handleClick(e: MouseEvent<HTMLAnchorElement>) {
-    e.preventDefault();
     onClick?.(e);
 
     if (e.defaultPrevented || pathname === href) {
       return;
     }
 
+    e.preventDefault();
     window.history.pushState({}, '', href);
     window.dispatchEvent(new PopStateEvent('popstate'));
   }
