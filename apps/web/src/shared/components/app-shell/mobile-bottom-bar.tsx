@@ -72,15 +72,14 @@ function CenterCreateAction() {
 }
 
 function BottomBarTab({ item, active }: { item: NavItem; active: boolean }) {
-  return (
-    <NavLink
-      href={item.href}
-      aria-current={active ? 'page' : undefined}
-      className={cn(
-        'relative flex flex-1 flex-col items-center gap-0.5 py-2 text-[10px] font-medium transition-colors active:opacity-60',
-        active ? 'text-primary' : 'text-muted-foreground',
-      )}
-    >
+  const useTypedLink = item.href === '/' || item.href === '/transactions';
+  const className = cn(
+    'relative flex flex-1 flex-col items-center gap-0.5 py-2 text-[10px] font-medium transition-colors active:opacity-60',
+    active ? 'text-primary' : 'text-muted-foreground',
+  );
+
+  const content = (
+    <>
       <div
         className={cn(
           'flex h-7 w-14 items-center justify-center rounded-full transition-colors',
@@ -90,6 +89,24 @@ function BottomBarTab({ item, active }: { item: NavItem; active: boolean }) {
         <HugeiconsIcon icon={item.icon} size={20} className={cn(active && 'text-primary')} />
       </div>
       <span>{item.label}</span>
+    </>
+  );
+
+  if (useTypedLink) {
+    return (
+      <Link
+        to={item.href as '/' | '/transactions'}
+        aria-current={active ? 'page' : undefined}
+        className={className}
+      >
+        {content}
+      </Link>
+    );
+  }
+
+  return (
+    <NavLink href={item.href} aria-current={active ? 'page' : undefined} className={className}>
+      {content}
     </NavLink>
   );
 }
