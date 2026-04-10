@@ -1,6 +1,6 @@
 import { Add01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { useRouterState } from '@tanstack/react-router';
+import { Link, useRouterState } from '@tanstack/react-router';
 import { isNavActive, type NavItem, PRIMARY_NAV_ITEMS } from '@/shared/lib/navigation';
 import { SHELL } from '@/shared/lib/strings';
 import { cn } from '@/shared/lib/utils';
@@ -56,15 +56,17 @@ export function MobileBottomBar() {
  */
 function CenterCreateAction() {
   return (
-    <div className="flex flex-col items-center gap-0.5 px-2 -translate-y-3">
-      <NavLink
-        href="/transactions/new"
-        className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/25 active:scale-95 transition-transform"
+    <div className="-translate-y-3 px-2">
+      <Link
+        to="/transactions/new"
+        className="flex flex-col items-center gap-0.5"
         aria-label={SHELL.addTransaction}
       >
-        <HugeiconsIcon icon={Add01Icon} size={24} />
-      </NavLink>
-      <span className="text-[10px] font-medium text-muted-foreground">{SHELL.add}</span>
+        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/25 transition-transform active:scale-95">
+          <HugeiconsIcon icon={Add01Icon} size={24} />
+        </span>
+        <span className="text-[10px] font-medium text-muted-foreground">{SHELL.add}</span>
+      </Link>
     </div>
   );
 }

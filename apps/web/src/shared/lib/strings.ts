@@ -32,6 +32,8 @@ export const SHELL = {
   brandName: 'Rumbo',
   searchPlaceholder: 'Buscar...',
   searchMobilePlaceholder: 'Buscar en Rumbo',
+  transactionSearchPlaceholder: 'Buscar por tipo, categoría, monto o nota',
+  transactionSearchClearLabel: 'Limpiar búsqueda',
   addTransaction: 'Agregar movimiento',
   newTransaction: 'Nuevo movimiento',
   add: 'Agregar',

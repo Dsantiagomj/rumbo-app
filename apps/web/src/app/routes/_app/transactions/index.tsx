@@ -11,15 +11,19 @@ export const Route = createFileRoute('/_app/transactions/')({
 function TransactionsIndexPage() {
   const navigate = useNavigate({ from: '/transactions' });
   const search = Route.useSearch();
-  const month = search.month ?? getCurrentMonthValue();
+  const month = search.month === 'all' ? undefined : (search.month ?? getCurrentMonthValue());
 
   return (
     <MovimientosPage
       month={month}
+      query={search.q?.trim() ?? ''}
       onMonthChange={(nextMonth) => {
         void navigate({
           to: '/transactions',
-          search: nextMonth === getCurrentMonthValue() ? {} : { month: nextMonth },
+          search: {
+            month: nextMonth ? nextMonth : 'all',
+            q: search.q,
+          },
         });
       }}
     />

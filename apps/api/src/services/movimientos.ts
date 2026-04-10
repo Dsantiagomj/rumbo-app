@@ -7,10 +7,26 @@ import {
   movimientoSchema,
   movimientoUpdateSchema,
 } from '@rumbo/shared';
-import { and, desc, eq, gte, lt } from 'drizzle-orm';
+import { and, desc, eq, gte, lt, sql } from 'drizzle-orm';
+import { MOVIMIENTOS_SERVICE } from './movimientos-strings.js';
 
 type MovimientoRow = typeof movimientos.$inferSelect;
+type AvailableMonthRow = { month: string };
 
+// HACK: Narrow local DB contract until the shared db package exports the typed client.
+type AvailableMonthsDb = {
+  select: (selection: { month: ReturnType<typeof sql<string>> }) => {
+    from: (table: typeof movimientos) => {
+      where: (condition: unknown) => {
+        groupBy: (grouping: ReturnType<typeof sql<string>>) => {
+          orderBy: (...clauses: unknown[]) => Promise<AvailableMonthRow[]>;
+        };
+      };
+    };
+  };
+};
+
+// HACK: Tests stub only the query methods used by this service, so we keep a minimal contract here.
 export type MovimientosDb = {
   select: () => {
     from: (table: typeof movimientos) => {
@@ -54,8 +70,19 @@ export function createMovimientosService(database: MovimientosDb) {
       query: { month?: string },
     ): Promise<MovimientoListResponse> {
       const { month } = movimientoListQuerySchema.parse(query);
-      const resolvedMonth = month ?? getCurrentMonthKey();
-      const { startDate, endDate } = getMonthRange(resolvedMonth);
+
+      if (month === 'all') {
+        const rows = await database
+          .select()
+          .from(movimientos)
+          .where(eq(movimientos.userId, userId))
+          .orderBy(desc(movimientos.date), desc(movimientos.time));
+
+        return { items: rows.map(mapMovimientoRecord) };
+      }
+
+      const targetMonth = month ?? getCurrentMonthKey();
+      const { startDate, endDate } = getMonthRange(targetMonth);
 
       const rows = await database
         .select()
@@ -67,12 +94,9 @@ export function createMovimientosService(database: MovimientosDb) {
             lt(movimientos.date, endDate),
           ),
         )
-        .orderBy(desc(movimientos.date), desc(movimientos.createdAt));
+        .orderBy(desc(movimientos.date), desc(movimientos.time));
 
-      return {
-        month: resolvedMonth,
-        items: rows.map(mapMovimientoRecord),
-      };
+      return { month: targetMonth, items: rows.map(mapMovimientoRecord) };
     },
 
     async createMovimiento(userId: string, input: unknown): Promise<Movimiento> {
@@ -85,13 +109,14 @@ export function createMovimientosService(database: MovimientosDb) {
           type: parsedInput.type,
           amount: parsedInput.amount.toFixed(2),
           date: parsedInput.date,
+          time: getCurrentTimeKey(),
           category: parsedInput.category,
           note: normalizeOptionalText(parsedInput.note),
         })
         .returning();
 
       if (!created) {
-        throw new MovimientoServiceError('No se pudo crear el movimiento', 500);
+        throw new MovimientoServiceError(MOVIMIENTOS_SERVICE.createFailed, 500);
       }
 
       return mapMovimientoRecord(created);
@@ -110,6 +135,7 @@ export function createMovimientosService(database: MovimientosDb) {
           type: parsedInput.type,
           amount: parsedInput.amount.toFixed(2),
           date: parsedInput.date,
+          time: getCurrentTimeKey(),
           category: parsedInput.category,
           note: normalizeOptionalText(parsedInput.note),
           updatedAt: new Date(),
@@ -118,7 +144,7 @@ export function createMovimientosService(database: MovimientosDb) {
         .returning();
 
       if (!updated) {
-        throw new MovimientoServiceError('Movimiento no encontrado', 404);
+        throw new MovimientoServiceError(MOVIMIENTOS_SERVICE.notFound, 404);
       }
 
       return mapMovimientoRecord(updated);
@@ -134,7 +160,7 @@ export function createMovimientosService(database: MovimientosDb) {
       const row = rows[0];
 
       if (!row) {
-        throw new MovimientoServiceError('Movimiento no encontrado', 404);
+        throw new MovimientoServiceError(MOVIMIENTOS_SERVICE.notFound, 404);
       }
 
       return mapMovimientoRecord(row);
@@ -147,7 +173,7 @@ export function createMovimientosService(database: MovimientosDb) {
         .returning({ id: movimientos.id });
 
       if (!deleted) {
-        throw new MovimientoServiceError('Movimiento no encontrado', 404);
+        throw new MovimientoServiceError(MOVIMIENTOS_SERVICE.notFound, 404);
       }
     },
   };
@@ -161,6 +187,20 @@ export async function listMovimientos(userId: string, query: { month?: string })
 export async function getMovimiento(userId: string, movimientoId: string) {
   const service = createMovimientosService(await getMovimientosDb());
   return service.getMovimiento(userId, movimientoId);
+}
+
+export async function listAvailableMonths(userId: string): Promise<string[]> {
+  const monthExpr = sql<string>`to_char(${movimientos.date}, 'YYYY-MM')`;
+  const monthsDb = await getAvailableMonthsDb();
+
+  const rows = await monthsDb
+    .select({ month: monthExpr })
+    .from(movimientos)
+    .where(eq(movimientos.userId, userId))
+    .groupBy(monthExpr)
+    .orderBy(desc(monthExpr));
+
+  return rows.map((row) => row.month);
 }
 
 export async function createMovimiento(userId: string, input: unknown) {
@@ -181,7 +221,15 @@ export async function deleteMovimiento(userId: string, movimientoId: string) {
 async function getMovimientosDb(): Promise<MovimientosDb> {
   const { db } = await import('../lib/db.js');
 
+  // HACK: Drizzle's inferred DB type is not exported from the shared db layer yet.
   return db as unknown as MovimientosDb;
+}
+
+async function getAvailableMonthsDb(): Promise<AvailableMonthsDb> {
+  const { db } = await import('../lib/db.js');
+
+  // HACK: Keep this narrow cast local until the shared db package exports the typed DB client.
+  return db as unknown as AvailableMonthsDb;
 }
 
 function mapMovimientoRecord(record: MovimientoRow): Movimiento {
@@ -229,6 +277,15 @@ function formatDateKey(date: Date) {
   return `${year}-${month}-${day}`;
 }
 
+function getCurrentTimeKey() {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+
+  return `${hours}:${minutes}:${seconds}`;
+}
+
 function toIsoDateTimeString(value: Date | string) {
   if (value instanceof Date) {
     return value.toISOString();
@@ -237,7 +294,7 @@ function toIsoDateTimeString(value: Date | string) {
   const parsed = new Date(value);
 
   if (Number.isNaN(parsed.getTime())) {
-    throw new MovimientoServiceError('No se pudo leer la fecha del movimiento', 500);
+    throw new MovimientoServiceError(MOVIMIENTOS_SERVICE.invalidDate, 500);
   }
 
   return parsed.toISOString();

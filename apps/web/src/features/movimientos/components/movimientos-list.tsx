@@ -15,15 +15,22 @@ import { formatCurrency, groupByDate } from '../utils';
 
 interface MovimientosListProps {
   items: Movimiento[];
+  searchQuery?: string;
   onDelete: (item: Movimiento) => void;
 }
 
-export function MovimientosList({ items, onDelete }: MovimientosListProps) {
+export function MovimientosList({ items, searchQuery, onDelete }: MovimientosListProps) {
   if (!items.length) {
+    const isSearchEmptyState = Boolean(searchQuery);
+
     return (
       <div className="py-8 text-center">
-        <h3 className="font-medium">{MOVIMIENTOS.emptyTitle}</h3>
-        <p className="mt-2 text-sm text-muted-foreground">{MOVIMIENTOS.emptyDescription}</p>
+        <h3 className="font-medium">
+          {isSearchEmptyState ? MOVIMIENTOS.emptySearchTitle : MOVIMIENTOS.emptyTitle}
+        </h3>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {isSearchEmptyState ? MOVIMIENTOS.emptySearchDescription : MOVIMIENTOS.emptyDescription}
+        </p>
       </div>
     );
   }
@@ -41,7 +48,7 @@ export function MovimientosList({ items, onDelete }: MovimientosListProps) {
           {group.items.map((item) => (
             <div
               key={item.id}
-              className="mx-1 flex items-center justify-between gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-muted/30 sm:px-4"
+              className="group/row mx-1 flex items-center justify-between gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-muted/30 sm:px-4"
             >
               <div className="flex min-w-0 flex-1 items-center gap-3">
                 <span
@@ -52,9 +59,13 @@ export function MovimientosList({ items, onDelete }: MovimientosListProps) {
                   aria-hidden="true"
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium">{item.category}</p>
+                  <p className="text-sm font-medium">
+                    <HighlightMatch text={item.category} query={searchQuery} />
+                  </p>
                   {item.note ? (
-                    <p className="truncate text-xs text-muted-foreground">{item.note}</p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      <HighlightMatch text={item.note} query={searchQuery} />
+                    </p>
                   ) : null}
                 </div>
               </div>
@@ -66,7 +77,8 @@ export function MovimientosList({ items, onDelete }: MovimientosListProps) {
                     item.type === 'income' ? 'text-emerald-600' : 'text-foreground',
                   )}
                 >
-                  {item.type === 'income' ? '+' : '-'} {formatCurrency(item.amount)}
+                  {item.type === 'income' ? '+' : '-'}{' '}
+                  <HighlightMatch text={formatCurrency(item.amount)} query={searchQuery} />
                 </span>
 
                 <DropdownMenu>
@@ -102,5 +114,57 @@ export function MovimientosList({ items, onDelete }: MovimientosListProps) {
         </div>
       ))}
     </div>
+  );
+}
+
+function HighlightMatch({ text, query }: { text: string; query?: string }) {
+  const normalizedQuery = query?.trim();
+
+  if (!normalizedQuery) {
+    return text;
+  }
+
+  const normalizedText = text.toLowerCase();
+  const normalizedNeedle = normalizedQuery.toLowerCase();
+
+  if (!normalizedText.includes(normalizedNeedle)) {
+    return text;
+  }
+
+  const segments: Array<{ value: string; highlighted: boolean }> = [];
+  let cursor = 0;
+
+  while (cursor < text.length) {
+    const matchIndex = normalizedText.indexOf(normalizedNeedle, cursor);
+
+    if (matchIndex === -1) {
+      segments.push({ value: text.slice(cursor), highlighted: false });
+      break;
+    }
+
+    if (matchIndex > cursor) {
+      segments.push({ value: text.slice(cursor, matchIndex), highlighted: false });
+    }
+
+    const end = matchIndex + normalizedNeedle.length;
+    segments.push({ value: text.slice(matchIndex, end), highlighted: true });
+    cursor = end;
+  }
+
+  return (
+    <>
+      {segments.map((segment, index) =>
+        segment.highlighted ? (
+          <mark
+            key={`${segment.value}-${index}`}
+            className="rounded bg-primary/15 px-0.5 text-current"
+          >
+            {segment.value}
+          </mark>
+        ) : (
+          <span key={`${segment.value}-${index}`}>{segment.value}</span>
+        ),
+      )}
+    </>
   );
 }

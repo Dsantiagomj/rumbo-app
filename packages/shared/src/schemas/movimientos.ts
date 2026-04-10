@@ -85,7 +85,8 @@ export const movimientoCreateSchema = movimientoBaseSchema.superRefine((value, c
 export const movimientoUpdateSchema = movimientoCreateSchema;
 
 export const movimientoListQuerySchema = z.object({
-  month: monthKeySchema.optional(),
+  month: z.union([monthKeySchema, z.literal('all')]).optional(),
+  q: z.string().trim().max(120).optional(),
 });
 
 export const movimientoIdParamsSchema = z.object({
@@ -104,7 +105,7 @@ export const movimientoSchema = z.object({
 });
 
 export const movimientoListResponseSchema = z.object({
-  month: monthKeySchema,
+  month: monthKeySchema.optional(),
   items: z.array(movimientoSchema),
 });
 
@@ -114,6 +115,10 @@ export const movimientoMutationResponseSchema = z.object({
 
 export const movimientoDeleteResponseSchema = z.object({
   success: z.literal(true),
+});
+
+export const movimientoAvailableMonthsResponseSchema = z.object({
+  months: z.array(monthKeySchema),
 });
 
 export type MovimientoType = z.infer<typeof movimientoTypeSchema>;
@@ -128,6 +133,9 @@ export type Movimiento = z.infer<typeof movimientoSchema>;
 export type MovimientoListResponse = z.infer<typeof movimientoListResponseSchema>;
 export type MovimientoMutationResponse = z.infer<typeof movimientoMutationResponseSchema>;
 export type MovimientoDeleteResponse = z.infer<typeof movimientoDeleteResponseSchema>;
+export type MovimientoAvailableMonthsResponse = z.infer<
+  typeof movimientoAvailableMonthsResponseSchema
+>;
 
 function getTodayDateKey() {
   const today = new Date();

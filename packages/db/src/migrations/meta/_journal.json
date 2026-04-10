@@ -15,6 +15,13 @@
       "when": 1775510493453,
       "tag": "0001_short_warlock",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1775782710750,
+      "tag": "0002_conscious_lady_mastermind",
+      "breakpoints": true
     }
   ]
 }

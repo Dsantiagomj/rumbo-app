@@ -19,6 +19,7 @@ export const movimientos = pgTable(
     type: text('type').notNull(),
     amount: numeric('amount', { precision: 15, scale: 2 }).notNull(),
     date: dateColumn('date').notNull(),
+    time: text('time').notNull().default('12:00:00'),
     category: text('category').notNull(),
     note: text('note'),
     createdAt: timestamp('created_at').notNull().defaultNow(),

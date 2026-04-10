@@ -1,0 +1,1 @@
+ALTER TABLE "movimientos" ADD COLUMN "time" text DEFAULT '12:00:00' NOT NULL;

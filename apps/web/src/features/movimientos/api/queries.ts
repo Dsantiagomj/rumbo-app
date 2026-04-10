@@ -1,7 +1,9 @@
 import {
+  type MovimientoAvailableMonthsResponse,
   type MovimientoListQuery,
   type MovimientoListResponse,
   type MovimientoMutationResponse,
+  movimientoAvailableMonthsResponseSchema,
   movimientoListResponseSchema,
   movimientoMutationResponseSchema,
 } from '@rumbo/shared';
@@ -10,14 +12,15 @@ import { api } from '@/shared/lib/api-client';
 
 export const movimientosKeys = {
   all: ['movimientos'] as const,
-  list: (month: string) => ['movimientos', month] as const,
+  months: ['movimientos', 'months'] as const,
+  list: (month?: string) => ['movimientos', month ?? 'all'] as const,
   detail: (id: string) => ['movimientos', 'detail', id] as const,
 };
 
-export function movimientosQueryOptions(month: string) {
+export function movimientosQueryOptions(month?: string) {
   return queryOptions({
     queryKey: movimientosKeys.list(month),
-    queryFn: () => fetchMovimientos({ month }),
+    queryFn: () => fetchMovimientos(month ? { month } : {}),
   });
 }
 
@@ -26,6 +29,20 @@ export function movimientoQueryOptions(id: string) {
     queryKey: movimientosKeys.detail(id),
     queryFn: () => fetchMovimiento(id),
   });
+}
+
+export function availableMonthsQueryOptions() {
+  return queryOptions({
+    queryKey: movimientosKeys.months,
+    queryFn: fetchAvailableMonths,
+    staleTime: 1000 * 60 * 5,
+  });
+}
+
+async function fetchAvailableMonths(): Promise<MovimientoAvailableMonthsResponse> {
+  const response = await api.get<MovimientoAvailableMonthsResponse>('/api/movimientos/months');
+
+  return movimientoAvailableMonthsResponseSchema.parse(response);
 }
 
 async function fetchMovimientos(query: MovimientoListQuery): Promise<MovimientoListResponse> {

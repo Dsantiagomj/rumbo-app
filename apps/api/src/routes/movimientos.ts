@@ -14,6 +14,7 @@ import {
   createMovimiento,
   deleteMovimiento,
   getMovimiento,
+  listAvailableMonths,
   listMovimientos,
   MovimientoServiceError,
   updateMovimiento,
@@ -45,7 +46,19 @@ export function createMovimientosRoutes(options: CreateMovimientosRoutesOptions 
   const routeAuthMiddleware = options.authMiddleware ?? authMiddleware;
   const service = options.service ?? defaultMovimientosRouteService;
 
-  movimientosRoutes.use('*', routeAuthMiddleware);
+  movimientosRoutes.use('/movimientos', routeAuthMiddleware);
+  movimientosRoutes.use('/movimientos/*', routeAuthMiddleware);
+
+  movimientosRoutes.get('/movimientos/months', async (c) => {
+    try {
+      const user = c.get('user');
+      const months = await listAvailableMonths(user.id);
+
+      return c.json({ months });
+    } catch (error) {
+      return handleRouteError(c, error);
+    }
+  });
 
   movimientosRoutes.get('/movimientos/:id', async (c) => {
     try {

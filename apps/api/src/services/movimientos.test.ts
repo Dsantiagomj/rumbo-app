@@ -244,6 +244,7 @@ function createRow(overrides: Partial<MovimientoRow> = {}): MovimientoRow {
     type: 'expense',
     amount: '123.45',
     date: getTodayDateKey(),
+    time: '12:00:00',
     category: 'Comida',
     note: 'Supermercado',
     createdAt: new Date('2026-04-06T12:00:00.000Z'),

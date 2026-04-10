@@ -104,6 +104,19 @@ export function ShellProvider({ children }: { children: ReactNode }) {
         toggleAssistant();
       }
 
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        const searchInput = document.querySelector<HTMLInputElement>(
+          '[data-rumbo-search="transactions"]',
+        );
+
+        if (searchInput) {
+          event.preventDefault();
+          searchInput.focus();
+          searchInput.select();
+          return;
+        }
+      }
+
       if (event.key === 'Escape' && assistantOpen) {
         setAssistantOpen(false);
       }
