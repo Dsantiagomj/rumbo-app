@@ -1,23 +1,43 @@
 import type { Session, User } from 'better-auth';
-import type { Context, Next } from 'hono';
-import { auth } from '../lib/auth.js';
+import type { Context, MiddlewareHandler, Next } from 'hono';
 
 export type AuthVariables = {
   user: User;
   session: Session;
 };
 
-export async function authMiddleware(c: Context<{ Variables: AuthVariables }>, next: Next) {
-  const session = await auth.api.getSession({
-    headers: c.req.raw.headers,
-  });
+type AuthSessionResult = {
+  user: User;
+  session: Session;
+};
 
-  if (!session) {
-    return c.json({ error: 'Unauthorized' }, 401);
-  }
+type AuthClient = {
+  api: {
+    getSession: (input: { headers: Headers }) => Promise<AuthSessionResult | null>;
+  };
+};
 
-  c.set('user', session.user);
-  c.set('session', session.session);
+export function createAuthMiddleware(authClient: AuthClient): MiddlewareHandler<{
+  Variables: AuthVariables;
+}> {
+  return async function authMiddleware(c: Context<{ Variables: AuthVariables }>, next: Next) {
+    const session = await authClient.api.getSession({
+      headers: c.req.raw.headers,
+    });
 
-  return next();
+    if (!session) {
+      return c.json({ error: 'Unauthorized' }, 401);
+    }
+
+    c.set('user', session.user);
+    c.set('session', session.session);
+
+    return next();
+  };
 }
+
+export const authMiddleware: MiddlewareHandler<{ Variables: AuthVariables }> = async (c, next) => {
+  const { auth } = await import('../lib/auth.js');
+
+  return createAuthMiddleware(auth)(c, next);
+};

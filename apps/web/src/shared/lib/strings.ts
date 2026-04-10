@@ -18,7 +18,7 @@ export const NAV = {
   transactions: 'Transacciones',
   budgets: 'Presupuestos',
   reports: 'Reportes',
-  settings: 'Configuracion',
+  settings: 'Configuración',
   account: 'Cuenta',
   preferences: 'Preferencias',
   security: 'Seguridad',
@@ -32,25 +32,27 @@ export const SHELL = {
   brandName: 'Rumbo',
   searchPlaceholder: 'Buscar...',
   searchMobilePlaceholder: 'Buscar en Rumbo',
-  addTransaction: 'Agregar movimiento',
-  newTransaction: 'Nuevo movimiento',
+  transactionSearchPlaceholder: 'Buscar por tipo, categoría, monto o nota',
+  transactionSearchClearLabel: 'Limpiar búsqueda',
+  addTransaction: 'Agregar transacción',
+  newTransaction: 'Nueva transacción',
   add: 'Agregar',
   backToApp: 'Volver a la app',
-  signOut: 'Cerrar sesion',
-  openMenu: 'Abrir menu',
-  closeMenu: 'Cerrar menu',
+  signOut: 'Cerrar sesión',
+  openMenu: 'Abrir menú',
+  closeMenu: 'Cerrar menú',
   openAssistant: 'Abrir asistente',
   closeAssistant: 'Cerrar asistente',
   assistantLabel: 'Asistente IA',
-  drawerDescription: 'Cuenta y configuracion',
+  drawerDescription: 'Cuenta y configuración',
   skipToContent: 'Ir al contenido principal',
-  navMain: 'Navegacion principal',
-  navSettings: 'Navegacion de configuracion',
-  navSettingsMobile: 'Secciones de configuracion',
-  navDrawer: 'Menu de cuenta',
-  comingSoon: 'Proximamente',
+  navMain: 'Navegación principal',
+  navSettings: 'Navegación de configuración',
+  navSettingsMobile: 'Secciones de configuración',
+  navDrawer: 'Menú de cuenta',
+  comingSoon: 'Próximamente',
   comingSoonAssistant:
-    'Tu asistente financiero con IA te ayudara a analizar gastos, categorizar transacciones y gestionar presupuestos.',
+    'Tu asistente financiero con IA te ayudará a analizar gastos, categorizar transacciones y gestionar presupuestos.',
 } as const;
 
 // ─── Settings pages ──────────────────────────────────────────────────────────
@@ -66,7 +68,7 @@ export const SETTINGS = {
   },
   security: {
     title: 'Seguridad',
-    description: 'Administra tu contrasena, autenticacion y sesiones activas.',
+    description: 'Administra tu contraseña, autenticación y sesiones activas.',
   },
   notifications: {
     title: 'Notificaciones',
@@ -77,8 +79,8 @@ export const SETTINGS = {
     description: 'Exporta, importa o elimina tus datos financieros.',
   },
   dangerZone: 'Zona de riesgo',
-  signOutLabel: 'Cerrar sesion',
-  signOutDescription: 'Cierra tu sesion en este dispositivo.',
+  signOutLabel: 'Cerrar sesión',
+  signOutDescription: 'Cierra tu sesión en este dispositivo.',
 } as const;
 
 // ─── Dashboard ───────────────────────────────────────────────────────────────
@@ -87,7 +89,7 @@ export const DASHBOARD = {
   welcomeBack: (name: string) => `Bienvenido de vuelta, ${name}`,
   gettingStartedTitle: 'Primeros pasos',
   gettingStartedDescription:
-    'Tu panel financiero se esta configurando. Empieza agregando tu primera transaccion.',
+    'Tu panel financiero se está configurando. Empieza agregando tu primera transacción.',
   cards: {
     balance: 'Balance',
     income: 'Ingresos',
@@ -99,17 +101,17 @@ export const DASHBOARD = {
 // ─── Toast notifications ─────────────────────────────────────────────────────
 
 export const TOAST = {
-  signOutSuccess: 'Sesion cerrada correctamente',
-  signOutError: 'Error al cerrar sesion',
-  genericError: 'Algo salio mal',
-  genericErrorDescription: 'Intenta de nuevo mas tarde.',
+  signOutSuccess: 'Sesión cerrada correctamente',
+  signOutError: 'Error al cerrar sesión',
+  genericError: 'Algo salió mal',
+  genericErrorDescription: 'Intenta de nuevo más tarde.',
   savedSuccess: 'Guardado correctamente',
 } as const;
 
 // ─── Common / generic ────────────────────────────────────────────────────────
 
 export const COMMON = {
-  unexpectedError: 'Ocurrio un error inesperado',
-  showPassword: 'Mostrar contrasena',
-  hidePassword: 'Ocultar contrasena',
+  unexpectedError: 'Ocurrió un error inesperado',
+  showPassword: 'Mostrar contraseña',
+  hidePassword: 'Ocultar contraseña',
 } as const;

@@ -1,4 +1,6 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+import { env } from '@/shared/lib/env';
+
+const API_BASE_URL = env.apiUrl;
 
 type RequestOptions = Omit<RequestInit, 'body'> & {
   body?: unknown;
